@@ -35,6 +35,7 @@ class CentralWidget(QWidget):
         self.midi_thread.start()
 
         self.dmx_thread, self.dmx = create_dmx_thread()
+        self.dmx.midi = self.midi
         self.dmx_thread.start()
 
         QApplication.instance().aboutToQuit.connect(self.midi.stop)
@@ -43,15 +44,8 @@ class CentralWidget(QWidget):
         QApplication.instance().quit()
         QApplication.processEvents()
         subprocess.check_output([
-            "pip", "install", "--force-reinstall",
+            "pip", "install", "--force-reinstall", "--no-deps",
             "git+https://github.com/MrFrangipane/ledboard-translator-emulator.git"
         ])
         subprocess.run([sys.executable] + sys.argv)
         sys.exit()
-
-    def on_midi(self, message: Message):
-        if message.type == 'control_change':
-            if self.dmx is None:
-                self.text.append(f"No DMX to forward MIDI message: {message}")
-            else:
-                self.dmx.updateRequested.emit(message.control, message.value * 2)

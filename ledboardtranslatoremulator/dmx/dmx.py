@@ -7,14 +7,13 @@ from DMXEnttecPro import Controller
 
 
 class Dmx(QObject):
-    updateRequested = Signal(int, int)
 
     def __init__(self):
         super().__init__()
         self._midi_in: BaseInput | None = None
         self._is_running = False
-        self.updateRequested.connect(self._update_requested)
         self._latest_submit_timestamp = time.time()
+        self.midi = None
 
     def start(self):
         print("DMX thread started")
@@ -27,19 +26,15 @@ class Dmx(QObject):
 
         if self.dmx is None:
             print("DMX not connected")
-
-    def _update_requested(self, channel: int, value: int):
-        if self.dmx is None:
             return
 
-        self.dmx.set_channel(channel, value)
-        elapsed = time.time() - self._latest_submit_timestamp
-        if elapsed >= 1.0 / 40.0:
-            try:
+        self._is_running = True
+        while self._is_running:
+
+            elapsed = time.time() - self._latest_submit_timestamp
+            if elapsed >= 1.0 / 40.0:
+                self.dmx.channels = self.midi.universe
                 self.dmx.submit()
-            except OSError:
-                self.dmx.close()
-                self.start()
 
 
 def create_dmx_thread() -> tuple[QThread, Dmx]:
