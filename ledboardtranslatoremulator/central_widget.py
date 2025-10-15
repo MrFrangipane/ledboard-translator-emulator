@@ -1,14 +1,12 @@
 import subprocess
-import time
-
 import sys
-from DMXEnttecPro import Controller
-from PySide6.QtCore import QThread
-from serial.tools.list_ports import comports
 
+from PySide6.QtCore import QThread
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QPushButton, QApplication
+
 from mido import Message
 
+from ledboardtranslatoremulator.dmx.dmx import create_dmx_thread, Dmx
 from ledboardtranslatoremulator.midi.midi import create_midi_thread, Midi
 
 
@@ -16,9 +14,11 @@ class CentralWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.dmx: Controller | None = None
-        self.midi_thread: QThread | None = None
+        self.dmx: Dmx | None = None
+        self.dmx_thread: QThread | None = None
+
         self.midi: Midi | None = None
+        self.midi_thread: QThread | None = None
 
         self.layout = QVBoxLayout(self)
 
@@ -30,27 +30,13 @@ class CentralWidget(QWidget):
         self.update_button.clicked.connect(self.update)
         self.layout.addWidget(self.update_button)
 
-        ports = comports()
-        enttec_found = False
-        self.text.append(f"Found {len(ports)} COM ports")
-        for port in ports:
-            if "usbserial-EN" in port.device:
-                self.text.append(f"Found enttec: {port}")
-                self.dmx = Controller(port.device)
-                enttec_found = True
-                break
-
-        if not enttec_found:
-            self.text.append("No Enttec DMX found")
-
         self.midi_thread, self.midi = create_midi_thread()
         self.midi.messageReceived.connect(self.on_midi)
+
+        self.dmx_thread, self.dmx = create_dmx_thread()
         self.midi_thread.start()
 
-        self.latest_submit_timestamp = time.time()
-
         QApplication.instance().aboutToQuit.connect(self.midi.stopRequested)
-        QApplication.instance().aboutToQuit.connect(self.midi_thread.quit)
 
     def update(self):
         QApplication.instance().quit()
@@ -67,7 +53,4 @@ class CentralWidget(QWidget):
             if self.dmx is None:
                 self.text.append(f"No DMX to forward MIDI message: {message}")
             else:
-                self.dmx.set_channel(1, message.value * 2)
-                elapsed = time.time() - self.latest_submit_timestamp
-                if elapsed >= 1.0 / 40:
-                    self.dmx.submit()
+                self.dmx.updateRequested.emit(1, message.value * 2)
