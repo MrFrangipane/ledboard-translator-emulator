@@ -22,11 +22,10 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: PyInstaller
-        uses: sayyid5416/pyinstaller@v2
+        uses: sayyid5416/pyinstaller@v1
         with:
           python_ver: 3.11
           spec: Ledboard translator emulator.spec
-          pyproject: pyproject.toml
           upload_exe_with_name: ledboard-translator-emulator-${{ github.ref_name }}
 
   publish:
@@ -53,7 +52,7 @@ jobs:
           prerelease: false
 
       - name: Upload artifact
-        uses: SierraSoftworks/gh-releases@v1.1.0
+        uses: SierraSoftworks/gh-releases@v1.0.7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           overwrite: 'true'
