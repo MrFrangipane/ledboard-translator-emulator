@@ -22,12 +22,20 @@ class CentralWidget(QWidget):
         self.update_button.clicked.connect(self.update)
         self.layout.addWidget(self.update_button)
 
+        self.dmx: Controller | None = None
         ports = comports()
-        self.text.append(f"Found {len(ports)} ports")
+        enttec: str | None = None
+        self.text.append(f"Found {len(ports)} COM ports")
         for port in ports:
-            self.text.append(f"{port.device}")
+            if "usbserial-EN" in port.device:
+                enttec = port.device
+                self.text.append(f"Found enttec: {port.device}")
+                break
 
-        self.dmx = Controller(ports[0].device)
+        if self.enttec is None:
+            self.text.append("No Enttec DMX found")
+        else:
+            self.dmx = Controller(enttec)
 
         self.midi = Midi()
         self.midi.messageReceived.connect(self.on_midi)
@@ -44,4 +52,7 @@ class CentralWidget(QWidget):
 
     def on_midi(self, message: Message):
         if message.type == 'control_change':
-            self.dmx.set_channel(1, message.value * 2)
+            if self.dmx is None:
+                self.text.append(f"No DMX to forward MIDI message: {message}")
+            else:
+                self.dmx.set_channel(1, message.value * 2)
