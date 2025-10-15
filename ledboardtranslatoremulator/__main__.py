@@ -70,7 +70,7 @@ if __name__ == "__main__":
     while True:
         try:
             time.sleep(1.0 / 40.0)
-            print(shm.buf[:])
+            print(bytearray(shm.buf))
             #broadcaster.universes[0].buffer = shm.buf[:]
             #broadcaster.send_data()
 
