@@ -34,7 +34,7 @@ class CentralWidget(QWidget):
         self.midi.messageReceived.connect(self.on_midi)
 
         self.dmx_thread, self.dmx = create_dmx_thread()
-        self.midi_thread.start()
+        self.dmx_thread.start()
 
         QApplication.instance().aboutToQuit.connect(self.midi.stopRequested)
 
