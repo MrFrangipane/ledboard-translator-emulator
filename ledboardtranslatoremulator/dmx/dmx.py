@@ -22,6 +22,7 @@ class Dmx(QObject):
         for port in ports:
             if "usbserial-EN" in port.device:
                 self.dmx = Controller(port.device)
+                self.dmx.set_dmx_parameters(output_rate=0)
                 print(f"DMX connected on {port.device}")
                 break
 
@@ -35,7 +36,11 @@ class Dmx(QObject):
         self.dmx.set_channel(channel, value)
         elapsed = time.time() - self._latest_submit_timestamp
         if elapsed >= 1.0 / 40.0:
-            self.dmx.submit()
+            try:
+                self.dmx.submit()
+            except OSError:
+                self.dmx.close()
+                self.start()
 
 
 def create_dmx_thread() -> tuple[QThread, Dmx]:
