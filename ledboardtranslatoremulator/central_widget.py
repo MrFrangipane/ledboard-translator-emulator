@@ -49,7 +49,8 @@ class CentralWidget(QWidget):
 
         self.latest_submit_timestamp = time.time()
 
-        QApplication.instance().aboutToQuit.connec(self.midi.stopRequested)
+        QApplication.instance().aboutToQuit.connect(self.midi.stopRequested)
+        QApplication.instance().aboutToQuit.connect(self.midi_thread.quit)
 
     def update(self):
         QApplication.instance().quit()
