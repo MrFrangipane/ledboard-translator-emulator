@@ -16,7 +16,7 @@ class Midi(QObject):
         self._midi_in = mido.open_input('Frangitron virtual MIDI port', virtual=True)
         while self._is_running:
             message = self._midi_in.receive(block=False)
-            if message.type == 'control_change':
+            if message is not None and message.type == 'control_change':
                 self.universe[message.control] = message.value * 2
 
         print("MIDI thread stopped")
