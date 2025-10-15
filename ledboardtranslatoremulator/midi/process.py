@@ -10,7 +10,9 @@ def process_midi(shared_buffer_name):
 
     while True:
         try:
+            print("Receiving message")
             message = midi_in.receive()
+            print(message)
             if message is not None:
                 if message.type == 'control_change':
                     channel = (message.control - 1) + message.channel * 127
