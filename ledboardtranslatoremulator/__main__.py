@@ -28,7 +28,7 @@ if __name__ == "__main__":
             for i in range(512):
                 broadcaster.universes[0].buffer[i] = shm.buf[i]
             broadcaster.send_data()
-            print("Sent data")
+            print(shm.buf[:20])
 
         except KeyboardInterrupt:
             break
