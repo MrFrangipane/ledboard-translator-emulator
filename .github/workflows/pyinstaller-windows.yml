@@ -10,9 +10,19 @@ jobs:
     name: Build windows executable
     runs-on: windows-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~\AppData\Local\pip\Cache
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: PyInstaller
-        uses: sayyid5416/pyinstaller@v1
+        uses: sayyid5416/pyinstaller@v2
         with:
           python_ver: 3.12
           spec: Ledboard translator emulator.spec
@@ -28,7 +38,7 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download artifact
         uses: actions/download-artifact@v4
@@ -43,7 +53,7 @@ jobs:
           prerelease: false
 
       - name: Upload artifact
-        uses: SierraSoftworks/gh-releases@v1.0.7
+        uses: SierraSoftworks/gh-releases@v1.1.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           overwrite: 'true'
