@@ -74,4 +74,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           overwrite: 'true'
-          files: ./osx-build/Ledboard translator emulator.exe
+          files: ./osx-build/Ledboard translator emulator
