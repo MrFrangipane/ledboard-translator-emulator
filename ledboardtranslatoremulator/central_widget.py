@@ -3,17 +3,23 @@ import time
 
 import sys
 from DMXEnttecPro import Controller
+from PySide6.QtCore import QThread
 from serial.tools.list_ports import comports
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QPushButton, QApplication
 from mido import Message
 
-from ledboardtranslatoremulator.midi.midi import Midi
+from ledboardtranslatoremulator.midi.midi import create_midi_thread, Midi
 
 
 class CentralWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        self.dmx: Controller | None = None
+        self.midi_thread: QThread | None = None
+        self.midi: Midi | None = None
+
         self.layout = QVBoxLayout(self)
 
         self.text = QTextEdit()
@@ -24,7 +30,6 @@ class CentralWidget(QWidget):
         self.update_button.clicked.connect(self.update)
         self.layout.addWidget(self.update_button)
 
-        self.dmx: Controller | None = None
         ports = comports()
         enttec_found = False
         self.text.append(f"Found {len(ports)} COM ports")
@@ -38,10 +43,13 @@ class CentralWidget(QWidget):
         if not enttec_found:
             self.text.append("No Enttec DMX found")
 
-        self.midi = Midi()
+        self.midi_thread, self.midi = create_midi_thread()
         self.midi.messageReceived.connect(self.on_midi)
+        self.midi_thread.start()
 
         self.latest_submit_timestamp = time.time()
+
+        QApplication.instance().aboutToQuit.connec(self.midi.stopRequested)
 
     def update(self):
         QApplication.instance().quit()
