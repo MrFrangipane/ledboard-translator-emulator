@@ -1,7 +1,9 @@
 import subprocess
 import sys
+from DMXEnttecPro import Controller
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QPushButton, QApplication
+from mido import Message
 
 from ledboardtranslatoremulator.midi.midi import Midi
 
@@ -19,8 +21,10 @@ class CentralWidget(QWidget):
         self.update_button.clicked.connect(self.update)
         self.layout.addWidget(self.update_button)
 
+        self.dmx = Controller('/dev/tty.usbserial-EN123456')
+
         self.midi = Midi()
-        self.midi.messageReceived.connect(lambda message: self.text.append(f"{message}\n"))
+        self.midi.messageReceived.connect(self.on_midi)
 
     def update(self):
         QApplication.instance().quit()
@@ -31,3 +35,7 @@ class CentralWidget(QWidget):
         ])
         subprocess.run([sys.executable] + sys.argv)
         sys.exit()
+
+    def on_midi(self, message: Message):
+        if message.type == 'control_change':
+            self.dmx.set_channel(1, message.value * 2)

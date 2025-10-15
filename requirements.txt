@@ -1,3 +1,4 @@
+DMXEnttecPro
 PySide6
 dateparser
 jinja2
