@@ -34,18 +34,30 @@ if __name__ == "__main__":
 
     midi_in = mido.open_input('Frangitron virtual MIDI port', virtual=True)
 
+    message_counter = 0
+    message_counter_timestamp = time.time()
+
     previous_timestamp = time.time()
     while True:
         try:
             message = midi_in.receive(block=False)
-            if message is not None and message.type == 'control_change':
-                channel = (message.control - 1) + message.channel * 20
-                broadcaster.universes[0].buffer[channel] = message.value * 2
+
+            if message is not None:
+                message_counter += 1
+
+                if message.type == 'control_change':
+                    channel = (message.control - 1) + message.channel * 20
+                    broadcaster.universes[0].buffer[channel] = message.value * 2
 
             now = time.time()
             if now - previous_timestamp >= (1.0 / 40.0):
                 previous_timestamp = now
                 broadcaster.send_data_synced()
+
+            if now - message_counter_timestamp >= 1.0:
+                message_counter_timestamp = now
+                print(f"Received {message_counter} MIDI messages in the last second")
+                message_counter = 0
 
         except KeyboardInterrupt:
             break
