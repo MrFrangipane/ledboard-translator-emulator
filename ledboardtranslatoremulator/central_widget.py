@@ -54,4 +54,4 @@ class CentralWidget(QWidget):
             if self.dmx is None:
                 self.text.append(f"No DMX to forward MIDI message: {message}")
             else:
-                self.dmx.updateRequested.emit(1, message.value * 2)
+                self.dmx.updateRequested.emit(message.control, message.value * 2)
