@@ -1,0 +1,50 @@
+name: PyInstaller (Windows) + Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build_windows:
+    name: Build windows executable
+    runs-on: windows-latest
+    steps:
+
+      - name: PyInstaller
+        uses: sayyid5416/pyinstaller@v1
+        with:
+          python_ver: 3.12
+          spec: Ledboard translator emulator.spec
+          requirements: requirements.txt
+          upload_exe_with_name: ledboard-translator-emulator-${{ github.ref_name }}
+
+  publish:
+    name: Publish release
+    needs: [build_windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ledboard-translator-emulator-${{ github.ref_name }}
+          path: .
+
+      - name: Publish release
+        id: create_release
+        uses: ghalactic/github-release-from-tag@v5
+        with:
+          prerelease: false
+
+      - name: Upload artifact
+        uses: SierraSoftworks/gh-releases@v1.0.7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          overwrite: 'true'
+          files: Ledboard translator emulator.exe
