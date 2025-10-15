@@ -39,6 +39,7 @@ if __name__ == "__main__":
             time.sleep(1.0 / 40.0)
             broadcaster.universes[0].buffer = bytearray(shm.buf)
             broadcaster.send_data()
+            print("Sent data")
 
         except KeyboardInterrupt:
             break
