@@ -34,7 +34,7 @@ jobs:
 
   publish:
     name: Publish release
-    needs: [build_windows]
+    needs: [build_windows, build_osx]
     runs-on: ubuntu-latest
     permissions:
       contents: write
