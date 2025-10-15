@@ -4,8 +4,6 @@ import sys
 from PySide6.QtCore import QThread
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QPushButton, QApplication
 
-from mido import Message
-
 from ledboardtranslatoremulator.dmx.dmx import create_dmx_thread, Dmx
 from ledboardtranslatoremulator.midi.midi import create_midi_thread, Midi
 
@@ -31,7 +29,6 @@ class CentralWidget(QWidget):
         self.layout.addWidget(self.update_button)
 
         self.midi_thread, self.midi = create_midi_thread()
-        self.midi.messageReceived.connect(self.on_midi)
         self.midi_thread.start()
 
         self.dmx_thread, self.dmx = create_dmx_thread()
