@@ -16,6 +16,7 @@ class Midi(QObject):
         self._is_running = True
         self._midi_in = mido.open_input('Frangitron virtual MIDI port', virtual=True)
         for message in self._midi_in:
+            print(message)
             self.messageReceived.emit(message)
             if not self._is_running:
                 break
