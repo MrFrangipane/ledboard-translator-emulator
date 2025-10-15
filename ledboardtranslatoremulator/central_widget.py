@@ -1,6 +1,7 @@
 import subprocess
 import sys
 from DMXEnttecPro import Controller
+from serial.tools.list_ports import comports
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QPushButton, QApplication
 from mido import Message
@@ -21,7 +22,12 @@ class CentralWidget(QWidget):
         self.update_button.clicked.connect(self.update)
         self.layout.addWidget(self.update_button)
 
-        self.dmx = Controller('/dev/tty.usbserial-EN123456')
+        ports = comports()
+        self.text.append(f"Found {len(ports)} ports")
+        for port in ports:
+            self.text.append(f"{port.device}")
+
+        self.dmx = Controller(ports[0].device)
 
         self.midi = Midi()
         self.midi.messageReceived.connect(self.on_midi)
