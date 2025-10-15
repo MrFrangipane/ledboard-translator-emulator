@@ -20,6 +20,7 @@ class Dmx(QObject):
         for port in ports:
             if "usbserial-EN" in port.device:
                 self.dmx = Controller(port.device)
+                self.dmx.set_dmx_parameters(output_rate=0)
                 print(f"DMX connected on {port.device}")
                 break
 
