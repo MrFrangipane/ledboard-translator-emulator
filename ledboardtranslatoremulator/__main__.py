@@ -18,7 +18,7 @@ if __name__ == "__main__":
     app = QApplication([])
     app.setApplicationName("LED Board Translator Emulator")
     app.setOrganizationName("Frangitron")
-    css.load_onto(app)
+    # css.load_onto(app)
 
     window = MainWindow(
         #logo_filepath=resources.find_from(__file__, "frangitron-logo.png"),
