@@ -32,7 +32,7 @@ class CentralWidget(QWidget):
                 self.text.append(f"Found enttec: {port.device}")
                 break
 
-        if self.enttec is None:
+        if enttec is None:
             self.text.append("No Enttec DMX found")
         else:
             self.dmx = Controller(enttec)
