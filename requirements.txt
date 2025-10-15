@@ -1,5 +1,5 @@
 PySide6
-dataclasses_json
-ledboardlib@git+https://github.com/Frangitron/ledboard-lib@main
-pyside6-helpers@git+https://github.com/MrFrangipane/pyside6-helpers@main
-setuptools>=46.0
+dateparser
+jinja2
+pyside6-helpers @ git+https://github.com/MrFrangipane/pyside6-helpers@main
+python-helpers @ git+https://github.com/MrFrangipane/python-helpers@main

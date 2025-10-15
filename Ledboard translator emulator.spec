@@ -1,6 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-
 a = Analysis(
     ['ledboardtranslatoremulator\\__main__.py'],
     pathex=[],
@@ -22,7 +21,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='Ledboard tranlator emulator',
+    name='Ledboard translator emulator',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
