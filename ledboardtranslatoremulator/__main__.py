@@ -33,6 +33,7 @@ if __name__ == "__main__":
         args=(shm.name,)
     )
     midi_process.start()
+    print("started midi process")
 
     while True:
         try:
