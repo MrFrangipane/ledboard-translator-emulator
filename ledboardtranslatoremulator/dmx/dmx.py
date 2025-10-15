@@ -34,8 +34,7 @@ class Dmx(QObject):
 
         self.dmx.set_channel(channel, value)
         elapsed = time.time() - self._latest_submit_timestamp
-        if elapsed >= 1.0 / 40:
-            print("DMX Submit")
+        if elapsed >= 1.0 / 30.0:
             self.dmx.submit()
 
 
