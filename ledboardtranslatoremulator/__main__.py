@@ -50,6 +50,5 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             break
 
-        finally:
-            midi_in.close()
-            print("Exiting")
+    midi_in.close()
+    print("Exiting")
