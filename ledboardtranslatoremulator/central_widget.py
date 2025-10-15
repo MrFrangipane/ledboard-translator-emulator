@@ -4,7 +4,8 @@ import sys
 from PySide6.QtCore import QThread
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QPushButton, QApplication
 
-from ledboardtranslatoremulator.dmx.dmx import create_dmx_thread, Dmx
+from ledboardtranslatoremulator.artnet.artnet import Artnet, create_artnet_thread
+# from ledboardtranslatoremulator.dmx.dmx import create_dmx_thread, Dmx
 from ledboardtranslatoremulator.midi.midi import create_midi_thread, Midi
 
 
@@ -12,8 +13,11 @@ class CentralWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.dmx: Dmx | None = None
-        self.dmx_thread: QThread | None = None
+        self.artnet: Artnet | None = None
+        self.artnet_thread: QThread | None = None
+
+        # self.dmx: Dmx | None = None
+        # self.dmx_thread: QThread | None = None
 
         self.midi: Midi | None = None
         self.midi_thread: QThread | None = None
@@ -31,9 +35,13 @@ class CentralWidget(QWidget):
         self.midi_thread, self.midi = create_midi_thread()
         self.midi_thread.start()
 
-        self.dmx_thread, self.dmx = create_dmx_thread()
-        self.dmx.midi = self.midi
-        self.dmx_thread.start()
+        # self.dmx_thread, self.dmx = create_dmx_thread()
+        # self.dmx.midi = self.midi
+        # self.dmx_thread.start()
+
+        self.artnet_thread, self.artnet = create_artnet_thread()
+        self.artnet.midi = self.midi
+        self.artnet_thread.start()
 
         QApplication.instance().aboutToQuit.connect(self.midi.stop)
 
