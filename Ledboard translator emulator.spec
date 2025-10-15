@@ -3,16 +3,18 @@
 import pkg_resources
 from PyInstaller.utils.hooks import collect_data_files
 
+
 installed_packages = [dist.key for dist in pkg_resources.working_set]
-all_datas = []
+all_data = []
 for package in installed_packages:
     try:
-        package_datas = collect_data_files(package)
-        if package_datas:
-            all_datas.extend(package_datas)
+        package_data = collect_data_files(package)
+        if package_data:
+            all_data.extend(package_data)
             print(f"Added data files from {package}")
     except Exception as e:
         print(f"Error collecting data files from {package}: {e}")
+
 
 a = Analysis(
     ['ledboardtranslatoremulator\\__main__.py'],
