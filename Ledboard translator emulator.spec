@@ -1,12 +1,14 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+import pyside6helpers
+
 a = Analysis(
     ['ledboardtranslatoremulator\\__main__.py'],
     pathex=[],
     binaries=[],
     datas=[
         ('ledboardtranslatoremulator\\resources', 'ledboardtranslatoremulator\\resources'),
-        ('pyside6helpers\\resources', 'pyside6helpers\\resources')
+        (pyside6helpers.__path__[0] + "\\resources", 'pyside6helpers\\resources')
     ],
     hiddenimports=[],
     hookspath=[],
