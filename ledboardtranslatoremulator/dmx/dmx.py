@@ -30,7 +30,7 @@ class Dmx(QObject):
 
         self._is_running = True
         while self._is_running:
-
+            QThread.currentThread().msleep(20)
             elapsed = time.time() - self._latest_submit_timestamp
             if elapsed >= 1.0 / 40.0:
                 self.dmx.channels = self.midi.universe
