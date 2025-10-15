@@ -24,15 +24,16 @@ class CentralWidget(QWidget):
 
         self.dmx: Controller | None = None
         ports = comports()
-        enttec: str | None = None
+        enttec_found = False
         self.text.append(f"Found {len(ports)} COM ports")
         for port in ports:
             if "usbserial-EN" in port.device:
                 self.text.append(f"Found enttec: {port}")
                 self.dmx = Controller(port.device)
+                enttec_found = True
                 break
 
-        if enttec is None:
+        if not enttec_found:
             self.text.append("No Enttec DMX found")
 
         self.midi = Midi()
