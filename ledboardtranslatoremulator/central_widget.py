@@ -1,4 +1,6 @@
 import subprocess
+import time
+
 import sys
 from DMXEnttecPro import Controller
 from serial.tools.list_ports import comports
@@ -39,6 +41,8 @@ class CentralWidget(QWidget):
         self.midi = Midi()
         self.midi.messageReceived.connect(self.on_midi)
 
+        self.latest_submit_timestamp = time.time()
+
     def update(self):
         QApplication.instance().quit()
         QApplication.processEvents()
@@ -55,4 +59,6 @@ class CentralWidget(QWidget):
                 self.text.append(f"No DMX to forward MIDI message: {message}")
             else:
                 self.dmx.set_channel(1, message.value * 2)
-                self.dmx.submit()
+                elapsed = time.time() - self.latest_submit_timestamp
+                if elapsed >= 1.0 / 40:
+                    self.dmx.submit()
