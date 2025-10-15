@@ -49,7 +49,7 @@ if __name__ == "__main__":
                     break
 
                 counter += 1
-                if counter > 10:
+                if counter > 2:
                     break
 
             if message is not None:
