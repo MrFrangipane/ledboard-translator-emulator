@@ -41,17 +41,7 @@ if __name__ == "__main__":
     message = None
     while True:
         try:
-            message = None
-            counter = 0
-            while True:
-                message = midi_in.receive(block=False)
-                if message is None:
-                    break
-
-                counter += 1
-                if counter > 2:
-                    break
-
+            message = midi_in.receive(block=False)
             if message is not None:
                 message_counter += 1
 
@@ -62,7 +52,7 @@ if __name__ == "__main__":
             now = time.time()
             if now - previous_timestamp >= (1.0 / 40.0):
                 previous_timestamp = now
-                broadcaster.send_data_synced()
+                broadcaster.send_data()
 
             if now - message_counter_timestamp >= 1.0:
                 message_counter_timestamp = now
