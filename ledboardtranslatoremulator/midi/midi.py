@@ -5,13 +5,11 @@ from PySide6.QtCore import QObject, Signal, QThread
 
 class Midi(QObject):
     messageReceived = Signal(mido.Message)
-    stopRequested = Signal()
 
     def __init__(self):
         super().__init__()
         self._midi_in: BaseInput | None = None
         self._is_running = False
-        self.stopRequested.connect(lambda: setattr(self, "_is_running", False))
 
     def start(self):
         print("MIDI thread started")
@@ -23,6 +21,10 @@ class Midi(QObject):
                 break
 
         print("MIDI thread stopped")
+
+    def stop(self):
+        self._is_running = False
+        self._midi_in.close()
 
 def create_midi_thread() -> tuple[QThread, Midi]:
     print("Creating MIDI thread")

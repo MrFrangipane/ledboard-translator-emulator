@@ -36,7 +36,7 @@ class CentralWidget(QWidget):
         self.dmx_thread, self.dmx = create_dmx_thread()
         self.dmx_thread.start()
 
-        QApplication.instance().aboutToQuit.connect(self.midi.stopRequested)
+        QApplication.instance().aboutToQuit.connect(self.midi.stop)
 
     def update(self):
         QApplication.instance().quit()
