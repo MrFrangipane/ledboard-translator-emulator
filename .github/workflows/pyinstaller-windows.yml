@@ -17,7 +17,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~\AppData\Local\pip\Cache
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
@@ -26,6 +26,7 @@ jobs:
         with:
           python_ver: 3.11
           spec: Ledboard translator emulator.spec
+          requirements: requirements.txt
           upload_exe_with_name: ledboard-translator-emulator-${{ github.ref_name }}
 
   publish:
