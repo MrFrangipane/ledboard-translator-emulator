@@ -11,7 +11,10 @@ if __name__ == "__main__":
     broadcaster = ArtnetBroadcaster('127.0.0.1')
     broadcaster.add_universe(0)
 
-    shm = shared_memory.SharedMemory(create=True, size=512)
+    shm = shared_memory.SharedMemory(create=True, size=2048)
+    print(
+        f"Created shared memory with name {shm.name} and size {shm.size}"
+    )
     midi_process = multiprocessing.Process(
         target=process_midi,
         args=(shm.name,)
