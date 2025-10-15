@@ -7,7 +7,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[
-        ('ledboardtranslatoremulator\\resources', 'ledboardtranslatoremulator\\resources'),
+        ('ledboardtranslatoremulator\\resources', 'resources'),
         (pyside6helpers.__path__[0] + "\\resources", 'pyside6helpers\\resources')
     ],
     hiddenimports=[],
