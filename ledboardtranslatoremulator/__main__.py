@@ -21,7 +21,7 @@ if __name__ == "__main__":
     css.load_onto(app)
 
     window = MainWindow(
-        logo_filepath=resources.find_from(application_path, "frangitron-logo.png"),
+        #logo_filepath=resources.find_from(application_path, "frangitron-logo.png"),
     )
     window.setCentralWidget(QLabel(__file__ + '\n' + __name__))
     window.show()
