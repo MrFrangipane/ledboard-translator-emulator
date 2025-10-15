@@ -1,5 +1,10 @@
 PySide6
 dateparser
 jinja2
+ledboarddesktop @ git+https://github.com/Frangitron/ledboard-desktop.git
+ledboarddesktop @ git+https://github.com/Frangitron/ledboard-desktop.git
+ledboardlib @ git+https://github.com/Frangitron/ledboard-lib.git
+mido[ports-rtmidi]
 pyside6-helpers @ git+https://github.com/MrFrangipane/pyside6-helpers@main
 python-helpers @ git+https://github.com/MrFrangipane/python-helpers@main
+python-rtmidi

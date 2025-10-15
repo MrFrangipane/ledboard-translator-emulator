@@ -1,19 +1,10 @@
-import subprocess
-import sys
-
-from PySide6.QtWidgets import QApplication, QPushButton
+from PySide6.QtWidgets import QApplication
 
 from pyside6helpers import css
 from pyside6helpers import resources
 from pyside6helpers.main_window import MainWindow
 
-
-def update():
-    QApplication.instance().quit()
-    QApplication.processEvents()
-    subprocess.check_output(["pip", "install", "--force-reinstall", "git+https://github.com/MrFrangipane/ledboard-translator-emulator.git"])
-    subprocess.run([sys.executable] + sys.argv)
-    sys.exit()
+from ledboardtranslatoremulator.central_widget import CentralWidget
 
 
 if __name__ == "__main__":
@@ -25,12 +16,8 @@ if __name__ == "__main__":
     window = MainWindow(
         logo_filepath=resources.find_from(__file__, "frangitron-logo.png"),
     )
-    window.setWindowTitle("LED Board Translator Emulator 2")
-
-    button = QPushButton("Update")
-    button.clicked.connect(update)
-
-    window.setCentralWidget(button)
+    window.setWindowTitle("LED Board Translator Emulator")
+    window.setCentralWidget(CentralWidget())
     window.show()
 
     app.exec()
