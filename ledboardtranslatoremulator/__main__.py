@@ -25,7 +25,7 @@ if __name__ == "__main__":
     window = MainWindow(
         logo_filepath=resources.find_from(__file__, "frangitron-logo.png"),
     )
-    window.setWindowTitle("LED Board Translator Emulator 1")
+    window.setWindowTitle("LED Board Translator Emulator 2")
 
     button = QPushButton("Update")
     button.clicked.connect(update)
