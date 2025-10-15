@@ -38,9 +38,12 @@ if __name__ == "__main__":
     message_counter_timestamp = time.time()
 
     previous_timestamp = time.time()
+    message = None
     while True:
         try:
-            message = midi_in.receive(block=False)
+            message = None
+            for _ in range(10):
+                message = midi_in.receive(block=False)
 
             if message is not None:
                 message_counter += 1
