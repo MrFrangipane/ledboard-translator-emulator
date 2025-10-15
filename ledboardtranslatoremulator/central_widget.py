@@ -32,6 +32,7 @@ class CentralWidget(QWidget):
 
         self.midi_thread, self.midi = create_midi_thread()
         self.midi.messageReceived.connect(self.on_midi)
+        self.midi_thread.start()
 
         self.dmx_thread, self.dmx = create_dmx_thread()
         self.dmx_thread.start()
