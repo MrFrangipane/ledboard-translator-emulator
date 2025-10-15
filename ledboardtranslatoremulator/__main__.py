@@ -9,6 +9,7 @@ from pyside6helpers.main_window import MainWindow
 
 
 def update():
+    QApplication.instance().quit()
     subprocess.check_output(["pip", "install", "--force-reinstall", "git+https://github.com/MrFrangipane/ledboard-translator-emulator.git"])
     subprocess.run(sys.argv)
     sys.exit()
