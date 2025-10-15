@@ -14,6 +14,7 @@ class Midi(QObject):
         self.stopRequested.connect(lambda: setattr(self, "_is_running", False))
 
     def start(self):
+        print("MIDI thread started")
         self._is_running = True
         self._midi_in = mido.open_input('Frangitron virtual MIDI port', virtual=True)
         for message in self._midi_in:
@@ -24,6 +25,7 @@ class Midi(QObject):
         print("MIDI thread stopped")
 
 def create_midi_thread() -> tuple[QThread, Midi]:
+    print("Creating MIDI thread")
     thread = QThread()
     midi = Midi()
     midi.moveToThread(thread)

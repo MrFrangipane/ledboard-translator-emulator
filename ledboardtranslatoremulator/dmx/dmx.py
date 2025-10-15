@@ -17,11 +17,16 @@ class Dmx(QObject):
         self._latest_submit_timestamp = time.time()
 
     def start(self):
+        print("DMX thread started")
         ports = comports()
         for port in ports:
             if "usbserial-EN" in port.device:
                 self.dmx = Controller(port.device)
+                print(f"DMX connected on {port.device}")
                 break
+
+        if self.dmx is None:
+            print("DMX not connected")
 
     def _update_requested(self, channel: int, value: int):
         if self.dmx is None:
@@ -34,6 +39,7 @@ class Dmx(QObject):
 
 
 def create_dmx_thread() -> tuple[QThread, Dmx]:
+    print("Creating DMX thread")
     thread = QThread()
     dmx = Dmx()
     dmx.moveToThread(thread)
