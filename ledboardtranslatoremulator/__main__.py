@@ -61,12 +61,13 @@ if __name__ == "__main__":
     broadcaster.add_universe(0)
 
     shm = shared_memory.SharedMemory(create=True, size=512)
+    """
     midi_process = multiprocessing.Process(
         target=process_midi,
-        args=(shm.name)
+        args=shm.name
     )
     midi_process.start()
-
+    """
     while True:
         try:
             time.sleep(1.0 / 40.0)
