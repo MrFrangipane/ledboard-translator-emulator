@@ -35,6 +35,7 @@ class Dmx(QObject):
             try:
                 self.dmx.submit()
             except IOError:
+                print("DMX IO error, restarting")
                 self._should_restart = True
                 break
 
