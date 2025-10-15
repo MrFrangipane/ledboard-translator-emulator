@@ -70,9 +70,8 @@ if __name__ == "__main__":
     while True:
         try:
             time.sleep(1.0 / 40.0)
-            print(bytearray(shm.buf))
-            #broadcaster.universes[0].buffer = shm.buf[:]
-            #broadcaster.send_data()
+            broadcaster.universes[0].buffer = bytearray(shm.buf)
+            broadcaster.send_data()
 
         except KeyboardInterrupt:
             break
