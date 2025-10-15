@@ -42,8 +42,15 @@ if __name__ == "__main__":
     while True:
         try:
             message = None
-            for _ in range(10):
+            counter = 0
+            while True:
                 message = midi_in.receive(block=False)
+                if message is None:
+                    break
+
+                counter += 1
+                if counter > 10:
+                    break
 
             if message is not None:
                 message_counter += 1
