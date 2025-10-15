@@ -29,6 +29,7 @@ class CentralWidget(QWidget):
         for port in ports:
             if "usbserial-EN" in port.device:
                 self.text.append(f"Found enttec: {port}")
+                self.dmx = Controller(port.device)
                 break
 
         if enttec is None:
@@ -53,3 +54,4 @@ class CentralWidget(QWidget):
                 self.text.append(f"No DMX to forward MIDI message: {message}")
             else:
                 self.dmx.set_channel(1, message.value * 2)
+                self.dmx.submit()
