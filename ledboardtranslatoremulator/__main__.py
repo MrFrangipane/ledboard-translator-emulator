@@ -1,10 +1,41 @@
-from PySide6.QtWidgets import QApplication
+import multiprocessing
 
-from pyside6helpers import css
-from pyside6helpers import resources
-from pyside6helpers.main_window import MainWindow
+import time
+from multiprocessing import shared_memory
 
-from ledboardtranslatoremulator.central_widget import CentralWidget
+import mido
+
+
+def process_midi(shared_buffer_name):
+    shm = shared_memory.SharedMemory(name=shared_buffer_name)
+    midi_in = mido.open_input('Frangitron virtual MIDI port', virtual=True)
+
+    message_counter = 0
+    message_counter_timestamp = time.time()
+
+    previous_timestamp = time.time()
+    while True:
+        try:
+            message = midi_in.receive(block=False)
+            if message is not None:
+                message_counter += 1
+
+                if message.type == 'control_change':
+                    channel = (message.control - 1) + message.channel * 20
+                    shm.buf[channel] = message.value * 2
+
+            now = time.time()
+            if now - message_counter_timestamp >= 1.0:
+                message_counter_timestamp = now
+                print(f"Received {message_counter} MIDI messages in the last second")
+                message_counter = 0
+
+        except KeyboardInterrupt:
+            break
+
+    midi_in.close()
+    print("Exiting")
+
 
 
 if __name__ == "__main__":
@@ -23,44 +54,27 @@ if __name__ == "__main__":
 
     app.exec()
     """
-    import time
-
-    import mido
 
     from ledboarddesktop.artnet.broadcaster import ArtnetBroadcaster
 
     broadcaster = ArtnetBroadcaster('127.0.0.1')
     broadcaster.add_universe(0)
 
-    midi_in = mido.open_input('Frangitron virtual MIDI port', virtual=True)
+    shm = shared_memory.SharedMemory(create=True, size=512)
+    midi_process = multiprocessing.Process(
+        target=process_midi,
+        args=(shm.name)
+    )
+    midi_process.start()
 
-    message_counter = 0
-    message_counter_timestamp = time.time()
-
-    previous_timestamp = time.time()
-    message = None
     while True:
         try:
-            message = midi_in.receive(block=False)
-            if message is not None:
-                message_counter += 1
-
-                if message.type == 'control_change':
-                    channel = (message.control - 1) + message.channel * 20
-                    broadcaster.universes[0].buffer[channel] = message.value * 2
-
-            now = time.time()
-            if now - previous_timestamp >= (1.0 / 40.0):
-                previous_timestamp = now
-                broadcaster.send_data()
-
-            if now - message_counter_timestamp >= 1.0:
-                message_counter_timestamp = now
-                print(f"Received {message_counter} MIDI messages in the last second")
-                message_counter = 0
+            time.sleep(1.0 / 40.0)
+            broadcaster.universes[0].buffer = shm.buf[:]
+            broadcaster.send_data()
 
         except KeyboardInterrupt:
             break
 
-    midi_in.close()
-    print("Exiting")
+    shm.close()
+    shm.unlink()  #
