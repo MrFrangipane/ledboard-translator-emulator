@@ -12,7 +12,7 @@ class Dmx(QObject):
         super().__init__()
         self._midi_in: BaseInput | None = None
         self._is_running = False
-        self._latest_submit_timestamp = time.time()
+        self._previous_timestamp = time.time()
         self.midi = None
 
     def start(self):
@@ -31,8 +31,9 @@ class Dmx(QObject):
         self._is_running = True
         while self._is_running:
             QThread.currentThread().msleep(20)
-            elapsed = time.time() - self._latest_submit_timestamp
+            elapsed = time.time() - self._previous_timestamp
             if elapsed >= 1.0 / 40.0:
+                self._previous_timestamp = time.time()
                 self.dmx.channels = self.midi.universe
                 self.dmx.submit()
 
