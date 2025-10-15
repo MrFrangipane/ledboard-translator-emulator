@@ -17,8 +17,7 @@ class Midi(QObject):
         while self._is_running:
             message = self._midi_in.receive(block=False)
             if message is not None and message.type == 'control_change':
-                channel = (message.control - 1) + message.channel * 10
-                print(channel)
+                channel = (message.control - 1) + message.channel * 20
                 self.universe[channel] = message.value * 2
 
         print("MIDI thread stopped")
