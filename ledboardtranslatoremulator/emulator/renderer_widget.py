@@ -14,7 +14,7 @@ from ledboardtranslatoremulator.emulator.renderer_state import RendererState
 from ledboardtranslatoremulator.emulator.sampling_point_bounds import SamplingPointBounds
 
 
-class LedRendererEmulator(QWidget):
+class LedRendererEmulatorWidget(QWidget):
     """Python port of LedRenderer with QPixmap rendering"""
 
     def __init__(self):
