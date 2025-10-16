@@ -1,6 +1,7 @@
 from PySide6.QtCore import QThread
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QApplication
 
+from ledboardtranslatoremulator.emulator.renderer import LedRendererEmulator
 from ledboardtranslatoremulator.io.io import IO, create_io_thread
 
 from ledboardtranslatoremulator.updater.widget import UpdateWidget
@@ -15,9 +16,8 @@ class CentralWidget(QWidget):
 
         self.layout = QVBoxLayout(self)
 
-        self.text = QTextEdit()
-        self.text.setReadOnly(True)
-        self.layout.addWidget(self.text)
+        self.led_renderer_emulator = LedRendererEmulator()
+        self.layout.addWidget(self.led_renderer_emulator)
 
         self.layout.addWidget(UpdateWidget())
 
