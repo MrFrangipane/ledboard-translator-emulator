@@ -17,6 +17,9 @@ class Translator:
         universe = [0] * 512
         for fixture in self._fixtures:
             for dmx_channel in range(fixture.dmx_channel_count):
+                if fixture.midi_channel not in (3, 9):
+                    continue
+
                 address = fixture.dmx_address + dmx_channel
                 value = self._midi.get_value(fixture.midi_channel - 1, dmx_channel) * 2
                 universe[address - 1] = value
