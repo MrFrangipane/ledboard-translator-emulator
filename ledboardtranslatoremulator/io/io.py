@@ -15,7 +15,7 @@ from ledboardtranslatoremulator.translators.midi import MidiTranslator
 
 class IO(QObject):
 
-    _MODE = ["artnet", "enttec"][1]
+    _ENABLE_ENTTEC = False
 
     def __init__(self):
         super().__init__()
@@ -25,7 +25,7 @@ class IO(QObject):
         self.broadcaster = ArtnetBroadcaster(target_ip='127.0.0.1')
         self.broadcaster.add_universe(0)
 
-        self._enttec: DMXEnttecPro | None = DMXEnttecPro("COM18") if self._MODE == "enttec" else None
+        self._enttec: DMXEnttecPro | None = DMXEnttecPro("COM18") if self._ENABLE_ENTTEC else None
 
         interop_store = InteropDataStore(resources.find_from(__file__, "interop-data-melinerion.json"))
         self._translator = MidiTranslator(
@@ -49,11 +49,12 @@ class IO(QObject):
         while self._is_running:
             QThread.currentThread().msleep(int(1000 / 50))
             self.broadcaster.universes[0].buffer = bytearray(self._translator.make_universe())
-            if self._enttec is not None:
-                self._enttec.channels = self.broadcaster.universes[0].buffer
+
+            if self._ENABLE_ENTTEC:
+                self._enttec.channels = bytearray(self.broadcaster.universes[0].buffer)
                 self._enttec.submit()
-            else:
-                self.broadcaster.send_data_synced()
+
+            self.broadcaster.send_data_synced()
 
         self._midi_in.stop()
 

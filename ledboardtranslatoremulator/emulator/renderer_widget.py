@@ -139,7 +139,7 @@ class LedRendererEmulatorWidget(QWidget):
         
         rect = event.rect()
         painter = QPainter(self)
-        painter.setRenderHint(QPainter.Antialiasing)
+        #painter.setRenderHint(QPainter.Antialiasing)
 
         painter.fillRect(rect, Qt.black)
 
