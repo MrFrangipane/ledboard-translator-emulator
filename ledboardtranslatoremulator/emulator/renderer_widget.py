@@ -135,7 +135,7 @@ class LedRendererEmulatorWidget(QWidget):
         return r, g, b
 
     def paintEvent(self, event):
-        control_parameters = self.artnet_translator.translate(self.broadcaster.universes[0].buffer)
+        control_parameters = self.artnet_translator.translate(bytearray(self.broadcaster.universes[0].buffer))
         
         rect = event.rect()
         painter = QPainter(self)
