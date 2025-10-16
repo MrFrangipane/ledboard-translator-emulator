@@ -25,7 +25,7 @@ def _midi_callback(message, time_stamp, shared_memory):
         # Check if it's a control change message (0xB0-0xBF)
         if (status_byte & 0xF0) == 0xB0:
             channel = status_byte & 0x0F  # Extract MIDI channel (0-15)
-            control = data_byte1 - 1  # Controller number (0-12-)
+            control = data_byte1 - 1  # Controller number (0-126)
             value = data_byte2  # Controller value (0-126)
 
             channel_index = control + channel * 127
