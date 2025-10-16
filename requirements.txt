@@ -1,6 +1,6 @@
 DMXEnttecPro
 PySide6
-artnet @ https://github.com/Frangitron/python-artnet@main
+artnet @ git+https://github.com/Frangitron/python-artnet@main
 dataclasses-json
 dateparser
 jinja2
