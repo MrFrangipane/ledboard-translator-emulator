@@ -4024,7 +4024,7 @@
     {
       "name": "NOON 3",
       "midi_channel": 3,
-      "dmx_address": 19,
+      "dmx_address": 42,
       "dmx_channel_count": 9
     },
     {
