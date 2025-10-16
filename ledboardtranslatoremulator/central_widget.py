@@ -13,15 +13,16 @@ class CentralWidget(QWidget):
 
         self.io: IO | None = None
         self.io_thread: QThread | None = None
+        self.io_thread, self.io = create_io_thread()
 
         layout = QVBoxLayout(self)
 
-        self.led_renderer_emulator = LedRendererEmulatorWidget()
+        # FIXME use components singleton
+        self.led_renderer_emulator = LedRendererEmulatorWidget(broadcaster=self.io.broadcaster)
         layout.addWidget(self.led_renderer_emulator)
 
         layout.addWidget(UpdateWidget())
 
         layout.setStretch(0, 100)
 
-        self.io_thread, self.io = create_io_thread()
         self.io_thread.start()

@@ -2,13 +2,13 @@ from PySide6.QtCore import QObject, QThread, Slot
 from PySide6.QtWidgets import QApplication
 
 from ledboardlib import InteropDataStore
-from ledboardlib.fixture import Fixture
+
 from pyside6helpers import resources
 
 from pythonartnet.broadcaster import ArtnetBroadcaster
 
 from ledboardtranslatoremulator.midi.input_process import MidiInputProcess
-from ledboardtranslatoremulator.translator.translator import Translator
+from ledboardtranslatoremulator.translators.midi import MidiTranslator
 
 
 class IO(QObject):
@@ -18,11 +18,11 @@ class IO(QObject):
 
         self._midi_in = MidiInputProcess(midi_port_name='OSC Artnet')
 
-        self._broadcaster = ArtnetBroadcaster(target_ip='127.0.0.1')
-        self._broadcaster.add_universe(0)
+        self.broadcaster = ArtnetBroadcaster(target_ip='127.0.0.1')
+        self.broadcaster.add_universe(0)
 
         interop_store = InteropDataStore(resources.find_from(__file__, "interop-data-melinerion.json"))
-        self._translator = Translator(
+        self._translator = MidiTranslator(
             fixtures=interop_store.data.fixtures,
             midi_input_process=self._midi_in
         )
@@ -42,8 +42,8 @@ class IO(QObject):
 
         while self._is_running:
             QThread.currentThread().msleep(int(1000 / 50))
-            self._broadcaster.universes[0].buffer = bytearray(self._translator.make_universe())
-            self._broadcaster.send_data_synced()
+            self.broadcaster.universes[0].buffer = bytearray(self._translator.make_universe())
+            self.broadcaster.send_data_synced()
 
         self._midi_in.stop()
 

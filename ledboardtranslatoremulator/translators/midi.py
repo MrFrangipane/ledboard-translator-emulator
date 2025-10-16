@@ -4,7 +4,7 @@ from ledboardtranslatoremulator.midi.input_process import MidiInputProcess
 
 
 
-class Translator:
+class MidiTranslator:
     """
     Translates MIDI CC values to DMX values, according to configured Fixtures
     """
