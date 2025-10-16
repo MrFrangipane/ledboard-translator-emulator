@@ -35,7 +35,7 @@ class IO(QObject):
         self._midi_in.start()
 
         while self._is_running:
-            QThread.currentThread().msleep(int(1000 / 40))
+            QThread.currentThread().msleep(int(1000 / 50))
             self._broadcaster.universes[0].buffer = bytearray(self._translator.make_universe())
             self._broadcaster.send_data_synced()
 
