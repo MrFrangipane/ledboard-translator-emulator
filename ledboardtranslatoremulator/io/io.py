@@ -1,7 +1,9 @@
 from PySide6.QtCore import QObject, QThread, Slot
 from PySide6.QtWidgets import QApplication
 
+from ledboardlib import InteropDataStore
 from ledboardlib.fixture import Fixture
+from pyside6helpers import resources
 
 from pythonartnet.broadcaster import ArtnetBroadcaster
 
@@ -19,20 +21,10 @@ class IO(QObject):
         self._broadcaster = ArtnetBroadcaster(target_ip='127.0.0.1')
         self._broadcaster.add_universe(0)
 
-
+        interop_store = InteropDataStore(resources.find_from(__file__, "interop-data-melinerion.json"))
         self._translator = Translator(
-            fixtures=[
-                Fixture(name="NOON 1", midi_channel=1, dmx_address=1, dmx_channel_count=9),
-                Fixture(name="NOON 2", midi_channel=2, dmx_address=10, dmx_channel_count=9),
-                Fixture(name="NOON 3", midi_channel=3, dmx_address=19, dmx_channel_count=9),
-                Fixture(name="NOON 4", midi_channel=4, dmx_address=28, dmx_channel_count=9),
-                Fixture(name="NOON 5", midi_channel=5, dmx_address=37, dmx_channel_count=9),
-                Fixture(name="NOON 6", midi_channel=6, dmx_address=46, dmx_channel_count=9),
-                Fixture(name="NOON 7", midi_channel=7, dmx_address=55, dmx_channel_count=9),
-                Fixture(name="NOON 8", midi_channel=8, dmx_address=64, dmx_channel_count=9),
-                Fixture(name="Melinerion", midi_channel=9, dmx_address=73, dmx_channel_count=12),
-            ],
-            midi_input_process=self._midi_in,
+            fixtures=interop_store.data.fixtures,
+            midi_input_process=self._midi_in
         )
         self._is_running = False
 
