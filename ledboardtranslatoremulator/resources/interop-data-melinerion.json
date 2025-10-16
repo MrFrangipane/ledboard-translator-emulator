@@ -4060,7 +4060,7 @@
     {
       "name": "Melinerion",
       "midi_channel": 9,
-      "dmx_address": 73,
+      "dmx_address": 21,
       "dmx_channel_count": 12
     }
   ]
