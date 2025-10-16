@@ -1,17 +1,7 @@
-from dataclasses import dataclass
-
-from dataclasses_json import dataclass_json
+from ledboardlib.fixture import Fixture
 
 from ledboardtranslatoremulator.midi.input_process import MidiInputProcess
 
-
-@dataclass_json
-@dataclass
-class Fixture:
-    name: str
-    midi_channel: int
-    dmx_address: int
-    dmx_channel_count: int
 
 
 class Translator:

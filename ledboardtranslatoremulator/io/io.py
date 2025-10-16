@@ -1,10 +1,12 @@
 from PySide6.QtCore import QObject, QThread, Slot
 from PySide6.QtWidgets import QApplication
 
+from ledboardlib.fixture import Fixture
+
 from pythonartnet.broadcaster import ArtnetBroadcaster
 
 from ledboardtranslatoremulator.midi.input_process import MidiInputProcess
-from ledboardtranslatoremulator.translator.translator import Translator, Fixture
+from ledboardtranslatoremulator.translator.translator import Translator
 
 
 class IO(QObject):
