@@ -6,6 +6,7 @@ jinja2
 ledboarddesktop@git+https://github.com/Frangitron/ledboard-desktop@main
 ledboardlib@git+https://github.com/Frangitron/ledboard-lib@main
 pyside6-helpers@git+https://github.com/MrFrangipane/pyside6-helpers@main
-pythonartnet@git+https://github.com/Frangitron/python-artnet@main
 python-helpers@git+https://github.com/MrFrangipane/python-helpers@main
 python-rtmidi
+pythonarduinoserial@git+https://github.com/Frangitron/python-arduino-serial@main
+pythonartnet@git+https://github.com/Frangitron/python-artnet@main
