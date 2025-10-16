@@ -26,6 +26,12 @@ class IO(QObject):
             fixtures=interop_store.data.fixtures,
             midi_input_process=self._midi_in
         )
+
+        self._alerts = self._translator.detect_conflicts()
+        if self._alerts:
+            print("!! Conflicts detected:")
+            print("\n".join(self._alerts))
+
         self._is_running = False
 
     def start(self):

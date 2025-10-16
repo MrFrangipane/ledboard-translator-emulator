@@ -4018,7 +4018,7 @@
     {
       "name": "NOON 2",
       "midi_channel": 2,
-      "dmx_address": 10,
+      "dmx_address": 11,
       "dmx_channel_count": 9
     },
     {
@@ -4030,37 +4030,37 @@
     {
       "name": "NOON 4",
       "midi_channel": 4,
-      "dmx_address": 28,
+      "dmx_address": 31,
       "dmx_channel_count": 9
     },
     {
       "name": "NOON 5",
       "midi_channel": 5,
-      "dmx_address": 37,
+      "dmx_address": 40,
       "dmx_channel_count": 9
     },
     {
       "name": "NOON 6",
       "midi_channel": 6,
-      "dmx_address": 46,
+      "dmx_address": 51,
       "dmx_channel_count": 9
     },
     {
       "name": "NOON 7",
       "midi_channel": 7,
-      "dmx_address": 55,
+      "dmx_address": 61,
       "dmx_channel_count": 9
     },
     {
       "name": "NOON 8",
       "midi_channel": 8,
-      "dmx_address": 64,
+      "dmx_address": 71,
       "dmx_channel_count": 9
     },
     {
       "name": "Melinerion",
       "midi_channel": 9,
-      "dmx_address": 21,
+      "dmx_address": 80,
       "dmx_channel_count": 12
     }
   ]
