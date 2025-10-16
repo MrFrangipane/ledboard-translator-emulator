@@ -14,12 +14,14 @@ class CentralWidget(QWidget):
         self.io: IO | None = None
         self.io_thread: QThread | None = None
 
-        self.layout = QVBoxLayout(self)
+        layout = QVBoxLayout(self)
 
         self.led_renderer_emulator = LedRendererEmulator()
-        self.layout.addWidget(self.led_renderer_emulator)
+        layout.addWidget(self.led_renderer_emulator)
 
-        self.layout.addWidget(UpdateWidget())
+        layout.addWidget(UpdateWidget())
+
+        layout.setStretch(0, 100)
 
         self.io_thread, self.io = create_io_thread()
         self.io_thread.start()

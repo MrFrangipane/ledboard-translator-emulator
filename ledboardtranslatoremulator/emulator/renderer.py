@@ -17,37 +17,24 @@ from ledboardtranslatoremulator.emulator.sampling_point_bounds import SamplingPo
 class LedRendererEmulator(QWidget):
     """Python port of LedRenderer with QPixmap rendering"""
 
-    def __init__(self, width=800, height=600):
+    def __init__(self):
         super().__init__()
-        self.setWindowTitle("LED Renderer Emulation")
-        self.resize(width, height)
-
-        self.ignore_dimmer = True
-
-        # Setup layout
-        self.layout = QVBoxLayout(self)
-        self.pixmap_label = QLabel(self)
-        self.layout.addWidget(self.pixmap_label)
 
         # Initialize state and objects
+        self.ignore_dimmer = True
         self.state = RendererState()
         self.noise = FixedPoint3DNoise()
         self.sampling_points: list[SamplingPoint] = []
         self.control_params: ControlParameters | None = None
         self.bounds = SamplingPointBounds()
         self.gamma_lookup = [0] * 256
-        self.pixmap = QPixmap(width, height)
 
         # Compute gamma lookup and bounds
         self.compute_gamma_lookup(2.6)
-        self.compute_bounds()
 
         # Setup timer for animation
         self.timer = QTimer(self)
-        self.timer.timeout.connect(self.render_)
-
-        # Start rendering
-        self.start()
+        self.timer.timeout.connect(self.update)
 
         # Load sampling points
         sampling_points: list[SamplingPoint] = []
@@ -62,8 +49,12 @@ class LedRendererEmulator(QWidget):
                 ControlParameters.from_json(file.read())
             )
 
+        # Start rendering
+        self.start()
+
     def start(self):
         """Start the rendering loop"""
+        self.compute_bounds()
         self.state.is_running = True
         self.state.previous_millis = int(time.time() * 1000)
         self.timer.start(16)  # ~60 FPS
@@ -146,11 +137,14 @@ class LedRendererEmulator(QWidget):
 
         return r, g, b
 
-    def render_(self):
-        """Main render function - updates the QPixmap with LED visualization"""
+    def paintEvent(self, event):
+        rect = event.rect()
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+
+        painter.fillRect(rect, Qt.black)
+
         if not self.state.is_running or self.control_params is None:
-            self.pixmap.fill(Qt.black)
-            self.pixmap_label.setPixmap(self.pixmap)
             return
 
         # Calculate elapsed time
@@ -171,13 +165,6 @@ class LedRendererEmulator(QWidget):
         self.state.z += self.control_params.noise_speed_z
         self.state.x += self.control_params.noise_speed_x
         self.state.y += self.control_params.noise_speed_y
-
-        # Clear the pixmap
-        self.pixmap.fill(Qt.black)
-
-        # Setup painter
-        painter = QPainter(self.pixmap)
-        painter.setRenderHint(QPainter.Antialiasing)
 
         # Calculate scaling to fit the window
         view_width = self.width()
@@ -208,7 +195,6 @@ class LedRendererEmulator(QWidget):
 
         # Draw each LED
         for point in self.sampling_points:
-
             # Single LED mode
             if self.control_params.single_led >= 0:
                 if point.index == self.control_params.single_led:
@@ -282,6 +268,3 @@ class LedRendererEmulator(QWidget):
 
         # End painting
         painter.end()
-
-        # Update display
-        self.pixmap_label.setPixmap(self.pixmap)
