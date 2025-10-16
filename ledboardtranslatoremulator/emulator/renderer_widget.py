@@ -151,15 +151,6 @@ class LedRendererEmulatorWidget(QWidget):
         elapsed = current_millis - self.state.previous_millis
         self.state.previous_millis = current_millis
 
-        # Update FPS counter
-        self.state.fps_frame_count += 1
-        self.state.fps_millis += elapsed
-        if self.state.fps_millis >= 1000:
-            fps = self.state.fps_frame_count / (self.state.fps_millis / 1000.0)
-            self.setWindowTitle(f"LED Renderer Emulation - {fps:.1f} FPS")
-            self.state.fps_frame_count = 0
-            self.state.fps_millis = 0
-
         # Update noise movement
         self.state.z += control_parameters.noise_speed_z
         self.state.x += control_parameters.noise_speed_x
@@ -234,13 +225,13 @@ class LedRendererEmulatorWidget(QWidget):
                     r, g, b = self.hsl_to_rgb(
                         control_parameters.noise_h,
                         control_parameters.noise_s,
-                        min(255, max(0, control_parameters.noise_l * brightness // 255))
+                        control_parameters.noise_l
                     )
                 else:  # RGB
                     # Use RGB values for noise, scaled by brightness
-                    r = control_parameters.noise_r * brightness // 255
-                    g = control_parameters.noise_g * brightness // 255
-                    b = control_parameters.noise_b * brightness // 255
+                    r = control_parameters.noise_r
+                    g = control_parameters.noise_g
+                    b = control_parameters.noise_b
             else:
                 # No noise mode
                 r, g, b = 0, 0, 0
@@ -249,9 +240,9 @@ class LedRendererEmulatorWidget(QWidget):
                 r, g, b = 0, 0, 0
 
             # Apply gamma correction
-            r = self.gamma_lookup[min(255, max(0, r))]
-            g = self.gamma_lookup[min(255, max(0, g))]
-            b = self.gamma_lookup[min(255, max(0, b))]
+            r = self.gamma_lookup[min(255, max(0, r * brightness // 255))]
+            g = self.gamma_lookup[min(255, max(0, g * brightness // 255))]
+            b = self.gamma_lookup[min(255, max(0, b * brightness // 255))]
 
             # Draw the LED
             x = offset_x + (point.x - self.bounds.min_x) * scale
@@ -265,6 +256,18 @@ class LedRendererEmulatorWidget(QWidget):
 
             # Draw LED
             painter.drawEllipse(x - size / 2, y - size / 2, size, size)
+
+
+        # Update FPS counter
+        self.state.fps_frame_count += 1
+        self.state.fps_millis += elapsed
+        if self.state.fps_millis >= 1000:
+            fps = self.state.fps_frame_count / (self.state.fps_millis / 1000.0)
+            self.setWindowTitle(f"LED Renderer Emulation - {fps:.1f} FPS")
+            self.state.fps_frame_count = 0
+            self.state.fps_millis = 0
+
+
 
         # End painting
         painter.end()
