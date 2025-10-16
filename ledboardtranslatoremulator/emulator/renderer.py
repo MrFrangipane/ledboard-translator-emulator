@@ -56,6 +56,12 @@ class LedRendererEmulator(QWidget):
             print(f"Loaded sampling points {len(sampling_points)}")
             self.set_points([SamplingPoint.from_dict(item) for item in data])
 
+        # Load default control parameters
+        with open("C:/Users/Ourson/PROJETS/ledboard/ledboard-desktop/emulator_defaults.json", 'r') as file:
+            self.set_control_params(
+                ControlParameters.from_json(file.read())
+            )
+
     def start(self):
         """Start the rendering loop"""
         self.state.is_running = True
@@ -232,6 +238,8 @@ class LedRendererEmulator(QWidget):
                 # Apply dimmer
                 if not self.ignore_dimmer:
                     brightness = noise_byte * self.control_params.dimmer // 255
+                else:
+                    brightness = noise_byte
 
                 # Apply color mode
                 if self.control_params.color_mode == ColorMode.HSL:
