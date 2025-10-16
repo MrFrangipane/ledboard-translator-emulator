@@ -1,37 +1,23 @@
-import multiprocessing
+from PySide6.QtWidgets import QApplication
 
-import time
-from multiprocessing import shared_memory
+from pyside6helpers import css
+from pyside6helpers import resources
+from pyside6helpers.main_window import MainWindow
 
-from ledboardtranslatoremulator.midi.process import process_midi
-from ledboarddesktop.artnet.broadcaster import ArtnetBroadcaster
+from ledboardtranslatoremulator.central_widget import CentralWidget
 
 
 if __name__ == "__main__":
-    broadcaster = ArtnetBroadcaster('127.0.0.1')
-    broadcaster.add_universe(0)
+    app = QApplication([])
+    app.setApplicationName("LED Board Translator Emulator")
+    app.setOrganizationName("Frangitron")
+    css.load_onto(app)
 
-    shm = shared_memory.SharedMemory(create=True, size=2048)
-    print(
-        f"Created shared memory with name {shm.name} and size {shm.size}"
+    window = MainWindow(
+        logo_filepath=resources.find_from(__file__, "frangitron-logo.png"),
     )
-    midi_process = multiprocessing.Process(
-        target=process_midi,
-        args=(shm.name,)
-    )
-    midi_process.start()
-    print("started midi process")
+    window.setWindowTitle("LED Board Translator Emulator")
+    window.setCentralWidget(CentralWidget())
+    window.show()
 
-    while True:
-        try:
-            time.sleep(1.0 / 40.0)
-            for i in range(512):
-                broadcaster.universes[0].buffer[i] = shm.buf[i]
-            broadcaster.send_data()
-            #print(list(shm.buf[:20]))
-
-        except KeyboardInterrupt:
-            break
-
-    shm.close()
-    shm.unlink()
+    app.exec()

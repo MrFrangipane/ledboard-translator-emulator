@@ -1,26 +1,17 @@
-import subprocess
-import sys
-
 from PySide6.QtCore import QThread
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QPushButton, QApplication
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QApplication
 
-from ledboardtranslatoremulator.artnet.artnet import Artnet, create_artnet_thread
-# from ledboardtranslatoremulator.dmx.dmx import create_dmx_thread, Dmx
-from ledboardtranslatoremulator.midi.midi import create_midi_thread, Midi
+from ledboardtranslatoremulator.io.io import IO, create_io_thread
+
+from ledboardtranslatoremulator.updater.widget import UpdateWidget
 
 
 class CentralWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.artnet: Artnet | None = None
-        self.artnet_thread: QThread | None = None
-
-        # self.dmx: Dmx | None = None
-        # self.dmx_thread: QThread | None = None
-
-        self.midi: Midi | None = None
-        self.midi_thread: QThread | None = None
+        self.io: IO | None = None
+        self.io_thread: QThread | None = None
 
         self.layout = QVBoxLayout(self)
 
@@ -28,29 +19,7 @@ class CentralWidget(QWidget):
         self.text.setReadOnly(True)
         self.layout.addWidget(self.text)
 
-        self.update_button = QPushButton("Update")
-        self.update_button.clicked.connect(self.update)
-        self.layout.addWidget(self.update_button)
+        self.layout.addWidget(UpdateWidget())
 
-        self.midi_thread, self.midi = create_midi_thread()
-        self.midi_thread.start()
-
-        # self.dmx_thread, self.dmx = create_dmx_thread()
-        # self.dmx.midi = self.midi
-        # self.dmx_thread.start()
-
-        self.artnet_thread, self.artnet = create_artnet_thread()
-        self.artnet.midi = self.midi
-        self.artnet_thread.start()
-
-        QApplication.instance().aboutToQuit.connect(self.midi.stop)
-
-    def update(self):
-        QApplication.instance().quit()
-        QApplication.processEvents()
-        subprocess.check_output([
-            "pip", "install", "--force-reinstall", "--no-deps",
-            "git+https://github.com/MrFrangipane/ledboard-translator-emulator.git"
-        ])
-        subprocess.run([sys.executable] + sys.argv)
-        sys.exit()
+        self.io_thread, self.io = create_io_thread()
+        self.io_thread.start()
