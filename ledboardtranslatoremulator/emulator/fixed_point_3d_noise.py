@@ -113,9 +113,9 @@ class FixedPoint3DNoise:
         Y0 = (y // self.Scale) * self.Scale
         Z0 = (z // self.Scale) * self.Scale
 
-        X1 = X0 + self.Scale if x > 0 else X0 - self.Scale
-        Y1 = Y0 + self.Scale if y > 0 else Y0 - self.Scale
-        Z1 = Z0 + self.Scale if z > 0 else Z0 - self.Scale
+        X1 = X0 + self.Scale
+        Y1 = Y0 + self.Scale
+        Z1 = Z0 + self.Scale
 
         wx = abs(x - X0)
         wy = abs(y - Y0)
