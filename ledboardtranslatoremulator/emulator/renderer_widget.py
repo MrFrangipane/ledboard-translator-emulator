@@ -152,9 +152,9 @@ class LedRendererEmulatorWidget(QWidget):
         self.state.previous_millis = current_millis
 
         # Update noise movement
-        self.state.z += control_parameters.noise_speed_z
-        self.state.x += control_parameters.noise_speed_x
-        self.state.y += control_parameters.noise_speed_y
+        self.state.x += int(elapsed * control_parameters.noise_speed_x / 10)
+        self.state.y += int(elapsed * control_parameters.noise_speed_y / 10)
+        self.state.z += int(elapsed * control_parameters.noise_speed_z / 10)
 
         # Calculate scaling to fit the window
         view_width = self.width()
