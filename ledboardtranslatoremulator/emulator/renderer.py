@@ -196,17 +196,18 @@ class LedRendererEmulator(QWidget):
         offset_x = (view_width - bounds_width * scale) / 2
         offset_y = (view_height - bounds_height * scale) / 2
 
+        # Apply shutter effect
+        is_shutter_open = 1
+        shutter = max(20, 255 - self.control_params.shutter)
+        self.state.shutter_elapsed += elapsed
+        if self.control_params.shutter > 0:
+            if self.state.shutter_elapsed > shutter:
+                is_shutter_open = 0
+            if self.state.shutter_elapsed > shutter * 2:
+                self.state.shutter_elapsed = 0
+
         # Draw each LED
         for point in self.sampling_points:
-            # Apply shutter effect
-            is_shutter_open = 1
-            shutter = max(20, 255 - self.control_params.shutter)
-            self.state.shutter_elapsed += elapsed
-            if self.control_params.shutter > 0:
-                if self.state.shutter_elapsed > shutter:
-                    is_shutter_open = 0
-                if self.state.shutter_elapsed > shutter * 2:
-                    self.state.shutter_elapsed = 0
 
             # Single LED mode
             if self.control_params.single_led >= 0:
