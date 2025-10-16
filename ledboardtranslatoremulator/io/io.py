@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QApplication
 from pythonartnet.broadcaster import ArtnetBroadcaster
 
 from ledboardtranslatoremulator.midi.input_process import MidiInputProcess
-from ledboardtranslatoremulator.translator.translator import Translator
+from ledboardtranslatoremulator.translator.translator import Translator, Fixture
 
 
 class IO(QObject):
@@ -18,7 +18,9 @@ class IO(QObject):
         self._broadcaster.add_universe(0)
 
         self._translator = Translator(
-            fixtures=[],
+            fixtures=[
+                Fixture(name="Melinerion", midi_channel=1, dmx_address=0, dmx_channel_count=12),
+            ],
             midi_input_process=self._midi_in,
         )
 
