@@ -2,16 +2,17 @@ import json
 import time
 
 from PySide6.QtCore import QTimer
-from PySide6.QtGui import QPixmap, Qt, QPainter, QColor, QBrush
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
+from PySide6.QtGui import Qt, QPainter, QColor, QBrush
+from PySide6.QtWidgets import QWidget
 
-from ledboardlib import SamplingPoint, ControlParameters
+from ledboardlib import SamplingPoint, ControlParameters, InteropDataStore
 from ledboardlib.color_mode import ColorMode
 from ledboardlib.mapping_mode import MappingMode
 
 from ledboardtranslatoremulator.emulator.fixed_point_3d_noise import FixedPoint3DNoise, NoiseParams
 from ledboardtranslatoremulator.emulator.renderer_state import RendererState
 from ledboardtranslatoremulator.emulator.sampling_point_bounds import SamplingPointBounds
+from pyside6helpers import resources
 
 
 class LedRendererEmulatorWidget(QWidget):
@@ -20,12 +21,15 @@ class LedRendererEmulatorWidget(QWidget):
     def __init__(self):
         super().__init__()
 
+        # Load interop data
+        interop_store = InteropDataStore(resources.find_from(__file__, "interop-data-melinerion.json"))
+
         # Initialize state and objects
         self.ignore_dimmer = True
         self.state = RendererState()
         self.noise = FixedPoint3DNoise()
-        self.sampling_points: list[SamplingPoint] = []
-        self.control_params: ControlParameters | None = None
+        self.sampling_points: list[SamplingPoint] = interop_store.data.sampling_points
+        self.control_params: ControlParameters | None = interop_store.data.default_control_parameters
         self.bounds = SamplingPointBounds()
         self.gamma_lookup = [0] * 256
 
@@ -35,19 +39,6 @@ class LedRendererEmulatorWidget(QWidget):
         # Setup timer for animation
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update)
-
-        # Load sampling points
-        sampling_points: list[SamplingPoint] = []
-        with open("C:/Users/Ourson/PROJETS/ledboard/ledboard-lib/scripts/sampling-points-melinerion.json", "r") as file:
-            data = json.load(file)
-            print(f"Loaded sampling points {len(sampling_points)}")
-            self.set_points([SamplingPoint.from_dict(item) for item in data])
-
-        # Load default control parameters
-        with open("C:/Users/Ourson/PROJETS/ledboard/ledboard-desktop/emulator_defaults.json", 'r') as file:
-            self.set_control_params(
-                ControlParameters.from_json(file.read())
-            )
 
         # Start rendering
         self.start()
