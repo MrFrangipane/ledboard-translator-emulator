@@ -15,21 +15,26 @@ from ledboardtranslatoremulator.translators.midi import MidiTranslator
 
 class IO(QObject):
 
-    _ENABLE_ENTTEC = False
-
     def __init__(self):
         super().__init__()
 
-        self._midi_in = MidiInputProcess(midi_port_name='OSC Artnet')
+        interop_filepath = resources.find_from(__file__, "interop-data-melinerion.json")
+        interop_data = InteropDataStore(interop_filepath).data
 
-        self.broadcaster = ArtnetBroadcaster(target_ip='127.0.0.1')
+        self._midi_in = MidiInputProcess(midi_port_name=interop_data.midi_port_name)
+
+        self.broadcaster = ArtnetBroadcaster(target_ip=interop_data.artnet_target_ip)
         self.broadcaster.add_universe(0)
 
-        self._enttec: DMXEnttecPro | None = DMXEnttecPro("COM18") if self._ENABLE_ENTTEC else None
+        self._enttec: DMXEnttecPro | None = None
+        if interop_data.enttec_output_enabled:
+            try:
+                self._enttec = DMXEnttecPro(interop_data.enttec_port_name)
+            except Exception as e:
+                print(f"Failed to initialize Enttec Pro: {e}")
 
-        interop_store = InteropDataStore(resources.find_from(__file__, "interop-data-melinerion.json"))
         self._translator = MidiTranslator(
-            fixtures=interop_store.data.fixtures,
+            fixtures=interop_data.fixtures,
             midi_input_process=self._midi_in
         )
 
@@ -50,13 +55,16 @@ class IO(QObject):
             QThread.currentThread().msleep(int(1000 / 50))
             self.broadcaster.universes[0].buffer = bytearray(self._translator.make_universe())
 
-            if self._ENABLE_ENTTEC:
+            if self._enttec is not None:
                 self._enttec.channels = bytearray(self.broadcaster.universes[0].buffer)
                 self._enttec.submit()
 
             self.broadcaster.send_data_synced()
 
         self._midi_in.stop()
+
+        if self._enttec is not None:
+            self._enttec.close()
 
     @Slot()
     def stop(self):

@@ -1,11 +1,17 @@
+from dataclasses import fields
+from typing import get_type_hints, get_args
+
 import time
 
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import QTimer, Signal
 from PySide6.QtGui import Qt, QPainter, QColor, QBrush
 from PySide6.QtWidgets import QWidget
 
+from ledboarddesktop.control_parameters.annotated_dataclass import UiControlParameters
+
 from ledboardlib import SamplingPoint, InteropDataStore, Fixture, ControlParameters
 from ledboardlib.color_mode import ColorMode
+from ledboardlib.dmx_attribution.c_struct import DmxAttributionStruct
 from ledboardlib.mapping_mode import MappingMode
 
 from pyside6helpers import resources
@@ -20,6 +26,8 @@ from ledboardtranslatoremulator.translators.artnet import ArtnetTranslator
 class LedRendererEmulatorWidget(QWidget):
     """Python port of LedRenderer with QPixmap rendering"""
 
+    detailsUpdated = Signal(str)
+
     def __init__(self, broadcaster: ArtnetBroadcaster):
         super().__init__()
 
@@ -27,23 +35,23 @@ class LedRendererEmulatorWidget(QWidget):
         self.broadcaster = broadcaster
 
         # Load interop data
-        interop_store = InteropDataStore(resources.find_from(__file__, "interop-data-melinerion.json"))
-        for fixture in interop_store.data.fixtures:
+        interop_filepath = resources.find_from(__file__, "interop-data-melinerion.json")
+        interop_data = InteropDataStore(interop_filepath).data
+
+        # Fixture to emulate
+        for fixture in interop_data.fixtures:
             if fixture.name.lower() == "melinerion":
                 print(f"Fixture for emulation is {fixture}")
                 self.artnet_translator = ArtnetTranslator(fixture)
                 break
-            
-        # Initialize state and objects
-        self.ignore_dimmer = True
-        self.state = RendererState()
-        self.noise = FixedPoint3DNoise()
-        self.sampling_points: list[SamplingPoint] = interop_store.data.sampling_points
-        self.bounds = SamplingPointBounds()
-        self.gamma_lookup = [0] * 256
 
-        # Compute gamma lookup and bounds
-        self.compute_gamma_lookup(2.6)
+        # Initialize state and objects
+        self.bounds = SamplingPointBounds()
+        self.control_parameters: ControlParameters | None  = None
+        self.ignore_dimmer = interop_data.emulator_ignores_dimmer
+        self.noise = FixedPoint3DNoise()
+        self.sampling_points: list[SamplingPoint] = interop_data.sampling_points
+        self.state = RendererState()
 
         # Setup timer for animation
         self.timer = QTimer(self)
@@ -64,19 +72,6 @@ class LedRendererEmulatorWidget(QWidget):
         self.state.is_running = False
         self.timer.stop()
 
-    def compute_gamma_lookup(self, gamma: float):
-        """Compute gamma correction lookup table"""
-        for i in range(256):
-            # Calculate gamma-corrected value
-            #corrected = int(pow(i / 255.0, gamma) * 255 + 0.5)
-            #self.gamma_lookup[i] = max(0, min(255, corrected))
-            # No gamma for Eumulator
-            self.gamma_lookup[i] = i
-
-    def set_points(self, points):
-        self.sampling_points = points
-        self.compute_bounds()
-
     def compute_bounds(self):
         """Compute min/mid/max bounds for all sampling points"""
         if not self.sampling_points:
@@ -92,13 +87,13 @@ class LedRendererEmulatorWidget(QWidget):
         self.bounds.mid_x = (self.bounds.min_x + self.bounds.max_x) // 2
         self.bounds.mid_y = (self.bounds.min_y + self.bounds.max_y) // 2
 
-    def get_noise_at(self, control_parameters: ControlParameters, x: int, y: int, z: int) -> int:
+    def get_noise_at(self, x: int, y: int, z: int) -> int:
         """Get noise value at given coordinates"""
         self.noise.set_params(NoiseParams(
-            octaves=control_parameters.noise_octaves,
-            scale=control_parameters.noise_scale,
-            min=control_parameters.noise_min,
-            max=control_parameters.noise_max,
+            octaves=self.control_parameters.noise_octaves,
+            scale=self.control_parameters.noise_scale,
+            min=self.control_parameters.noise_min,
+            max=self.control_parameters.noise_max,
         ))
         return self.noise.get_value(x, y, z)
 
@@ -134,13 +129,25 @@ class LedRendererEmulatorWidget(QWidget):
 
         return r, g, b
 
+    def update_details(self):
+        lines: list[str] = [f"{self.state.fps:.1f} FPS"]
+        ui_annotations = {
+            name: get_args(annotation)[1] for name, annotation in get_type_hints(UiControlParameters, include_extras=True).items()
+        }
+
+        for attribution in sorted(fields(DmxAttributionStruct), key=lambda x: x.default):
+            if attribution.default != 0:
+                pretty_name = ui_annotations[attribution.name].label
+                value = getattr(self.control_parameters, attribution.name)
+                lines.append(f"{attribution.default:02d} {pretty_name}: {value}")
+
+        self.detailsUpdated.emit("\n".join(lines))
+
     def paintEvent(self, event):
-        control_parameters = self.artnet_translator.translate(bytearray(self.broadcaster.universes[0].buffer))
+        self.control_parameters = self.artnet_translator.translate(bytearray(self.broadcaster.universes[0].buffer))
         
         rect = event.rect()
         painter = QPainter(self)
-        #painter.setRenderHint(QPainter.Antialiasing)
-
         painter.fillRect(rect, Qt.black)
 
         if not self.state.is_running:
@@ -152,9 +159,9 @@ class LedRendererEmulatorWidget(QWidget):
         self.state.previous_millis = current_millis
 
         # Update noise movement
-        self.state.x += int(elapsed * control_parameters.noise_speed_x / 10)
-        self.state.y += int(elapsed * control_parameters.noise_speed_y / 10)
-        self.state.z += int(elapsed * control_parameters.noise_speed_z / 10)
+        self.state.x += int(elapsed * self.control_parameters.noise_speed_x / 10)
+        self.state.y += int(elapsed * self.control_parameters.noise_speed_y / 10)
+        self.state.z += int(elapsed * self.control_parameters.noise_speed_z / 10)
 
         # Calculate scaling to fit the window
         view_width = self.width()
@@ -175,9 +182,9 @@ class LedRendererEmulatorWidget(QWidget):
 
         # Apply shutter effect
         is_shutter_open = 1
-        shutter = max(20, 255 - control_parameters.shutter)
+        shutter = max(20, 255 - self.control_parameters.shutter)
         self.state.shutter_elapsed += elapsed
-        if control_parameters.shutter > 0:
+        if self.control_parameters.shutter > 0:
             if self.state.shutter_elapsed > shutter:
                 is_shutter_open = 0
             if self.state.shutter_elapsed > shutter * 2:
@@ -185,19 +192,21 @@ class LedRendererEmulatorWidget(QWidget):
 
         # Draw each LED
         for point in self.sampling_points:
+            brightness = 0
+
             # Single LED mode
-            if control_parameters.single_led >= 0:
-                if point.index == control_parameters.single_led:
-                    brightness = control_parameters.single_led_brightness
+            if self.control_parameters.single_led >= 0:
+                if point.index == self.control_parameters.single_led:
+                    brightness = self.control_parameters.single_led_brightness
                     r, g, b = brightness, brightness, brightness
                 else:
                     r, g, b = 0, 0, 0
 
-            # Normal mode with noise
-            elif control_parameters.is_noise_on:
+            # Noise ON
+            elif self.control_parameters.is_noise_on:
                 # Get noise value for this point
                 x, y = 0, 0
-                if control_parameters.mapping_mode == MappingMode.MODE_1D:
+                if self.control_parameters.mapping_mode == MappingMode.MODE_1D:
                     x = point.index
                     y = 0
                 else:
@@ -205,69 +214,62 @@ class LedRendererEmulatorWidget(QWidget):
                     y = point.y
 
                 noise = self.get_noise_at(
-                    control_parameters,
-                    x * control_parameters.noise_scale_x + self.state.x,
-                    y * control_parameters.noise_scale_y + self.state.y,
+                    x * self.control_parameters.noise_scale_x + self.state.x,
+                    y * self.control_parameters.noise_scale_y + self.state.y,
                     self.state.z
                 )
-                # Scale to 0-255
-                noise_byte = min(255, max(0, noise * 255 // self.noise.Scale))
+                noise_byte = noise * 255 / self.noise.Scale
 
                 # Apply dimmer
                 if not self.ignore_dimmer:
-                    brightness = noise_byte * control_parameters.dimmer // 255
+                    brightness = noise_byte * self.control_parameters.dimmer / 255
                 else:
                     brightness = noise_byte
 
                 # Apply color mode
-                if control_parameters.color_mode == ColorMode.HSL:
+                if self.control_parameters.color_mode == ColorMode.HSL:
                     # Use HSL values for noise
                     r, g, b = self.hsl_to_rgb(
-                        control_parameters.noise_h,
-                        control_parameters.noise_s,
-                        control_parameters.noise_l
+                        self.control_parameters.noise_h,
+                        self.control_parameters.noise_s,
+                        self.control_parameters.noise_l
                     )
-                else:  # RGB
+                else:
                     # Use RGB values for noise, scaled by brightness
-                    r = control_parameters.noise_r
-                    g = control_parameters.noise_g
-                    b = control_parameters.noise_b
+                    r = self.control_parameters.noise_r
+                    g = self.control_parameters.noise_g
+                    b = self.control_parameters.noise_b
             else:
-                # No noise mode
+                # Noise OFF
                 r, g, b = 0, 0, 0
 
             if not is_shutter_open:
                 r, g, b = 0, 0, 0
 
-            # Apply gamma correction
-            r = self.gamma_lookup[min(255, max(0, r * brightness // 255))]
-            g = self.gamma_lookup[min(255, max(0, g * brightness // 255))]
-            b = self.gamma_lookup[min(255, max(0, b * brightness // 255))]
+            r = r * brightness / 255
+            g = g * brightness / 255
+            b = b * brightness / 255
 
             # Draw the LED
             x = offset_x + (point.x - self.bounds.min_x) * scale
             y = offset_y + (point.y - self.bounds.min_y) * scale
-
-            size = 10
 
             color = QColor(r, g, b)
             painter.setBrush(QBrush(color))
             painter.setPen(Qt.NoPen)
 
             # Draw LED
-            painter.drawEllipse(x - size / 2, y - size / 2, size, size)
+            painter.drawEllipse(x - scale / 2, y - scale / 2, scale, scale)
 
+        # End painting
+        painter.end()
 
         # Update FPS counter
         self.state.fps_frame_count += 1
         self.state.fps_millis += elapsed
-        if self.state.fps_millis >= 1000:
-            fps = self.state.fps_frame_count / (self.state.fps_millis / 1000.0)
-            self.setWindowTitle(f"LED Renderer Emulation - {fps:.1f} FPS")
+        if self.state.fps_millis >= 500:
+            self.state.fps = self.state.fps_frame_count / (self.state.fps_millis / 500.0)
             self.state.fps_frame_count = 0
             self.state.fps_millis = 0
 
-
-
-        # End painting
-        painter.end()
+        self.update_details()
