@@ -1,3 +1,4 @@
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
 
 from pyside6helpers import css
@@ -16,8 +17,13 @@ if __name__ == "__main__":
     window = MainWindow(
         logo_filepath=resources.find_from(__file__, "frangitron-logo.png"),
     )
+
+    def set_always_on_top(is_true):
+        window.setWindowFlag(Qt.WindowStaysOnTopHint, is_true)
+        window.show()
+
     window.setWindowTitle("LED Board Translator Emulator")
-    window.setCentralWidget(CentralWidget())
+    window.setCentralWidget(CentralWidget(set_always_on_top))
     window.show()
 
     app.exec()
