@@ -1,4 +1,101 @@
 {
+  "artnet_target_ip": "127.0.0.1",
+  "default_control_parameters": {
+    "dimmer": 80,
+    "mapping_mode": 0,
+    "noise_octaves": 1,
+    "noise_scale": 1,
+    "noise_scale_x": 60,
+    "noise_scale_y": 60,
+    "noise_speed_x": 0,
+    "noise_speed_y": -18,
+    "noise_speed_z": 4,
+    "noise_min": 384,
+    "noise_max": 896,
+    "color_mode": 1,
+    "noise_h": 36,
+    "noise_s": 255,
+    "noise_l": 128,
+    "noise_r": 0,
+    "noise_g": 0,
+    "noise_b": 0,
+    "runner_h": 0,
+    "runner_s": 0,
+    "runner_l": 0,
+    "runner_r": 0,
+    "runner_g": 0,
+    "runner_b": 0,
+    "runner_trigger": false,
+    "are_colors_inverted": false,
+    "is_noise_on": true,
+    "mask_x1": 0,
+    "mask_x2": 0,
+    "mask_y1": 0,
+    "mask_y2": 0,
+    "shutter": 0,
+    "single_led": -1,
+    "single_led_brightness": 128
+  },
+  "emulator_ignores_dimmer": true,
+  "enttec_output_enabled": false,
+  "enttec_port_name": "COM18",
+  "fixtures": [
+    {
+      "name": "NOON 1",
+      "midi_channel": 1,
+      "dmx_address": 1,
+      "dmx_channel_count": 9
+    },
+    {
+      "name": "NOON 2",
+      "midi_channel": 2,
+      "dmx_address": 11,
+      "dmx_channel_count": 9
+    },
+    {
+      "name": "NOON 3",
+      "midi_channel": 3,
+      "dmx_address": 21,
+      "dmx_channel_count": 9
+    },
+    {
+      "name": "NOON 4",
+      "midi_channel": 4,
+      "dmx_address": 31,
+      "dmx_channel_count": 9
+    },
+    {
+      "name": "NOON 5",
+      "midi_channel": 5,
+      "dmx_address": 40,
+      "dmx_channel_count": 9
+    },
+    {
+      "name": "NOON 6",
+      "midi_channel": 6,
+      "dmx_address": 51,
+      "dmx_channel_count": 9
+    },
+    {
+      "name": "NOON 7",
+      "midi_channel": 7,
+      "dmx_address": 61,
+      "dmx_channel_count": 9
+    },
+    {
+      "name": "NOON 8",
+      "midi_channel": 8,
+      "dmx_address": 71,
+      "dmx_channel_count": 9
+    },
+    {
+      "name": "Melinerion",
+      "midi_channel": 9,
+      "dmx_address": 80,
+      "dmx_channel_count": 12
+    }
+  ],
+  "midi_port_name": "OSC Artnet",
   "sampling_points": [
     {
       "index": 0,
@@ -3970,98 +4067,6 @@
       "led_indices": [
         360
       ]
-    }
-  ],
-  "default_control_parameters": {
-    "dimmer": 80,
-    "mapping_mode": 0,
-    "noise_octaves": 1,
-    "noise_scale": 1,
-    "noise_scale_x": 60,
-    "noise_scale_y": 60,
-    "noise_speed_x": 0,
-    "noise_speed_y": -18,
-    "noise_speed_z": 4,
-    "noise_min": 384,
-    "noise_max": 896,
-    "color_mode": 1,
-    "noise_h": 36,
-    "noise_s": 255,
-    "noise_l": 128,
-    "noise_r": 0,
-    "noise_g": 0,
-    "noise_b": 0,
-    "runner_h": 0,
-    "runner_s": 0,
-    "runner_l": 0,
-    "runner_r": 0,
-    "runner_g": 0,
-    "runner_b": 0,
-    "runner_trigger": false,
-    "are_colors_inverted": false,
-    "is_noise_on": true,
-    "mask_x1": 0,
-    "mask_x2": 0,
-    "mask_y1": 0,
-    "mask_y2": 0,
-    "shutter": 0,
-    "single_led": -1,
-    "single_led_brightness": 128
-  },
-  "fixtures": [
-    {
-      "name": "NOON 1",
-      "midi_channel": 1,
-      "dmx_address": 1,
-      "dmx_channel_count": 9
-    },
-    {
-      "name": "NOON 2",
-      "midi_channel": 2,
-      "dmx_address": 11,
-      "dmx_channel_count": 9
-    },
-    {
-      "name": "NOON 3",
-      "midi_channel": 3,
-      "dmx_address": 21,
-      "dmx_channel_count": 9
-    },
-    {
-      "name": "NOON 4",
-      "midi_channel": 4,
-      "dmx_address": 31,
-      "dmx_channel_count": 9
-    },
-    {
-      "name": "NOON 5",
-      "midi_channel": 5,
-      "dmx_address": 40,
-      "dmx_channel_count": 9
-    },
-    {
-      "name": "NOON 6",
-      "midi_channel": 6,
-      "dmx_address": 51,
-      "dmx_channel_count": 9
-    },
-    {
-      "name": "NOON 7",
-      "midi_channel": 7,
-      "dmx_address": 61,
-      "dmx_channel_count": 9
-    },
-    {
-      "name": "NOON 8",
-      "midi_channel": 8,
-      "dmx_address": 71,
-      "dmx_channel_count": 9
-    },
-    {
-      "name": "Melinerion",
-      "midi_channel": 9,
-      "dmx_address": 80,
-      "dmx_channel_count": 12
     }
   ]
 }
