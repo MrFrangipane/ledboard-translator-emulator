@@ -51,6 +51,7 @@ class LedRendererEmulatorWidget(QWidget):
         self.ignore_dimmer = interop_data.emulator_ignores_dimmer
         self.noise = FixedPoint3DNoise()
         self.sampling_points: list[SamplingPoint] = interop_data.sampling_points
+        print(f"Loaded {len(self.sampling_points)} sampling points from interop data")
         self.state = RendererState()
 
         # Setup timer for animation
