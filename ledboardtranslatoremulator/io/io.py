@@ -1,19 +1,21 @@
 from  DMXEnttecPro import Controller as DMXEnttecPro
 
-from PySide6.QtCore import QObject, QThread, Slot
+from PySide6.QtCore import QObject, QThread, Slot, Signal
 from PySide6.QtWidgets import QApplication
 
 from ledboardlib import InteropDataStore
 
 from pyside6helpers import resources
 
-from pythonartnet.broadcaster import ArtnetBroadcaster
+from pythonartnet.broadcaster import ArtnetBroadcaster, ArtnetBroadcastError
 
 from ledboardtranslatoremulator.midi.input_process import MidiInputProcess
 from ledboardtranslatoremulator.translators.midi import MidiTranslator
 
 
 class IO(QObject):
+    started = Signal()
+    errorOccurred = Signal(str)
 
     def __init__(self):
         super().__init__()
@@ -51,6 +53,8 @@ class IO(QObject):
         self._is_running = True
         self._midi_in.start()
 
+        self.started.emit()
+
         while self._is_running:
             QThread.currentThread().msleep(int(1000 / 50))
             self.broadcaster.universes[0].buffer = bytearray(self._translator.make_universe())
@@ -59,7 +63,12 @@ class IO(QObject):
                 self._enttec.channels = bytearray(self.broadcaster.universes[0].buffer)
                 self._enttec.submit()
 
-            self.broadcaster.send_data_synced()
+            try:
+                self.broadcaster.send_data_synced()
+            except ArtnetBroadcastError as e:
+                self.errorOccurred.emit(str(e))
+                self._is_running = False
+                break
 
         self._midi_in.stop()
 
