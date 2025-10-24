@@ -10,6 +10,7 @@ from pyside6helpers import resources
 from pythonartnet.broadcaster import ArtnetBroadcaster, ArtnetBroadcastError
 
 from ledboardtranslatoremulator.midi.input_process import MidiInputProcess
+from ledboardtranslatoremulator.settings import store as settings_store
 from ledboardtranslatoremulator.translators.midi import MidiTranslator
 
 
@@ -20,12 +21,18 @@ class IO(QObject):
     def __init__(self):
         super().__init__()
 
+        settings = settings_store.load()
+
         interop_filepath = resources.find_from(__file__, "interop-data-melinerion.json")
         interop_data = InteropDataStore(interop_filepath).data
 
+        if settings.target_ip is None:
+            print(f"No target IP found in settings file, using interop : {interop_data.artnet_target_ip}")
+            settings.target_ip = interop_data.artnet_target_ip
+
         self._midi_in = MidiInputProcess(midi_port_name=interop_data.midi_port_name)
 
-        self.broadcaster = ArtnetBroadcaster(target_ip=interop_data.artnet_target_ip)
+        self.broadcaster = ArtnetBroadcaster(target_ip=settings.target_ip)
         self.broadcaster.add_universe(0)
 
         self._enttec: DMXEnttecPro | None = None

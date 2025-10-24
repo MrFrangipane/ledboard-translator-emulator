@@ -1,6 +1,7 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
 
+from ledboardtranslatoremulator.settings import store as settings_store
 from pyside6helpers import css
 from pyside6helpers import resources
 from pyside6helpers.main_window import MainWindow
@@ -9,6 +10,8 @@ from ledboardtranslatoremulator.central_widget import CentralWidget
 
 
 if __name__ == "__main__":
+    settings_store.patch_from_interop()
+
     app = QApplication([])
     app.setApplicationName("LED Board Translator Emulator")
     app.setOrganizationName("Frangitron")
