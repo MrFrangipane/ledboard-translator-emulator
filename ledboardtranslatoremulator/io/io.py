@@ -21,6 +21,8 @@ class IO(QObject):
     def __init__(self):
         super().__init__()
 
+        self._artnet_enabled = True
+
         settings = settings_store.load()
 
         interop_filepath = resources.find_from(__file__, "interop-data-melinerion.json")
@@ -70,12 +72,14 @@ class IO(QObject):
                 self._enttec.channels = bytearray(self.broadcaster.universes[0].buffer)
                 self._enttec.submit()
 
+            if not self._artnet_enabled:
+                continue
+
             try:
                 self.broadcaster.send_data_synced()
             except ArtnetBroadcastError as e:
-                self.errorOccurred.emit(str(e))
-                self._is_running = False
-                break
+                self.errorOccurred.emit(f"Artnet disabled: {e}")
+                self._artnet_enabled = False
 
         self._midi_in.stop()
 
