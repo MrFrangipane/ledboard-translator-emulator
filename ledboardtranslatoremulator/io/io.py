@@ -1,11 +1,11 @@
-from  DMXEnttecPro import Controller as DMXEnttecPro
+from importlib import resources
+
+from DMXEnttecPro import Controller as DMXEnttecPro
 
 from PySide6.QtCore import QObject, QThread, Slot, Signal
 from PySide6.QtWidgets import QApplication
 
 from ledboardlib import InteropDataStore
-
-from pyside6helpers import resources
 
 from pythonartnet.broadcaster import ArtnetBroadcaster, ArtnetBroadcastError
 
@@ -25,7 +25,7 @@ class IO(QObject):
 
         settings = settings_store.load()
 
-        interop_filepath = resources.find_from(__file__, "interop-data-melinerion.json")
+        interop_filepath = str(resources.files('ledboardtranslatoremulator.resources') / 'interop-data-elephanz.json')
         interop_data = InteropDataStore(interop_filepath).data
 
         if settings.target_ip is None:

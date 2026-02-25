@@ -1,9 +1,10 @@
+from importlib import resources as _resources
+
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
 
 from ledboardtranslatoremulator.settings import store as settings_store
 from pyside6helpers import css
-from pyside6helpers import resources
 from pyside6helpers.main_window import MainWindow
 
 from ledboardtranslatoremulator.central_widget import CentralWidget
@@ -18,7 +19,7 @@ if __name__ == "__main__":
     css.load_onto(app)
 
     window = MainWindow(
-        logo_filepath=resources.find_from(__file__, "frangitron-logo.png"),
+        logo_filepath=str(_resources.path('ledboardtranslatoremulator.resources', 'frangitron-logo.png')),
     )
 
     def set_always_on_top(is_true):

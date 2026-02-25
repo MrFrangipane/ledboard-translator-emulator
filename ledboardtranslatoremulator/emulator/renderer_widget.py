@@ -1,4 +1,5 @@
 from dataclasses import fields
+from importlib import resources
 from typing import get_type_hints, get_args
 
 import time
@@ -14,7 +15,6 @@ from ledboardlib.color_mode import ColorMode
 from ledboardlib.dmx_attribution.c_struct import DmxAttributionStruct
 from ledboardlib.mapping_mode import MappingMode
 
-from pyside6helpers import resources
 from pythonartnet.broadcaster import ArtnetBroadcaster
 
 from ledboardtranslatoremulator.emulator.fixed_point_3d_noise import FixedPoint3DNoise, NoiseParams
@@ -35,12 +35,12 @@ class LedRendererEmulatorWidget(QWidget):
         self.broadcaster = broadcaster
 
         # Load interop data
-        interop_filepath = resources.find_from(__file__, "interop-data-melinerion.json")
+        interop_filepath = str(resources.files('ledboardtranslatoremulator.resources') / 'interop-data-elephanz.json')
         interop_data = InteropDataStore(interop_filepath).data
 
         # Fixture to emulate
         for fixture in interop_data.fixtures:
-            if fixture.name.lower() == "melinerion":
+            if fixture.name.lower() == "elephanz":
                 print(f"Fixture for emulation is {fixture}")
                 self.artnet_translator = ArtnetTranslator(fixture)
                 break
@@ -228,7 +228,7 @@ class LedRendererEmulatorWidget(QWidget):
                     brightness = noise_byte
 
                 # Apply color mode
-                if self.control_parameters.color_mode == ColorMode.HSL:
+                if self.control_parameters.color_mode == ColorMode.HSL_DIMMER:
                     # Use HSL values for noise
                     r, g, b = self.hsl_to_rgb(
                         self.control_parameters.noise_h,

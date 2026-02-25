@@ -1,16 +1,17 @@
 from copy import copy
 from dataclasses import fields
+from importlib import resources
 
 from ledboardlib import Fixture, ControlParameters, InteropDataStore, MappingMode, ColorMode
 from ledboardlib.dmx_attribution.c_struct import DmxAttributionStruct
-from pyside6helpers import resources
 
 
 class ArtnetTranslator:
     def __init__(self, fixture: Fixture):
         self._fixture = fixture
 
-        interop_store = InteropDataStore(resources.find_from(__file__, "interop-data-melinerion.json"))
+        resource_path = str(resources.files('ledboardtranslatoremulator.resources') / 'interop-data-elephanz.json')
+        interop_store = InteropDataStore(resource_path)
         self._default_parameters = interop_store.data.default_control_parameters
 
     def translate(self, universe: bytearray) -> ControlParameters:
