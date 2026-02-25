@@ -32,7 +32,7 @@
     "mask_x2": 0,
     "mask_y1": 0,
     "mask_y2": 0,
-    "strand_mask": 0,
+    "strand_mask": 15,
     "shutter": 0,
     "single_led": -1,
     "single_led_brightness": 13,
@@ -46,7 +46,7 @@
       "name": "Elephanz",
       "midi_channel": 1,
       "dmx_address": 1,
-      "dmx_channel_count": 14
+      "dmx_channel_count": 15
     }
   ],
   "midi_port_name": "OSC Artnet",

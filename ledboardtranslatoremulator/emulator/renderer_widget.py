@@ -193,6 +193,14 @@ class LedRendererEmulatorWidget(QWidget):
 
         # Draw each LED
         for point in self.sampling_points:
+
+            # FIXME hardcoded for Elephanz !!
+            if self.control_parameters.strand_mask > 0:
+                start = (self.control_parameters.strand_mask - 1) * 200
+                end = start + 200 - 1
+                if point.index < start or point.index > end:
+                    continue
+
             brightness = 0
 
             # Single LED mode

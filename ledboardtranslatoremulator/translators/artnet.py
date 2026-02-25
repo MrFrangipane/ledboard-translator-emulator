@@ -65,4 +65,7 @@ class ArtnetTranslator:
                 elif field.name in ["mask_x1", "mask_x2", "mask_y1", "mask_y2"]:
                     setattr(parameters, field.name, universe[self._fixture.dmx_address - 2 + field.default] * 2 - 255)
 
+                elif field.name == 'strand_mask':
+                    setattr(parameters, field.name, universe[self._fixture.dmx_address - 2 + field.default] // 32)
+
         return parameters
