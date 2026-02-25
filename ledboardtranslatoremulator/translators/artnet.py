@@ -50,7 +50,7 @@ class ArtnetTranslator:
 
                 # Color mode
                 elif field.name == "color_mode":
-                    parameters.color_mode = ColorMode(universe[self._fixture.dmx_address - 2 + field.default] // 128)
+                    parameters.color_mode = ColorMode(universe[self._fixture.dmx_address - 2 + field.default] // 85)
 
                 # Direct value assignments (0-255)
                 elif field.name in ["noise_h", "noise_s", "noise_l", "noise_r", "noise_g", "noise_b",

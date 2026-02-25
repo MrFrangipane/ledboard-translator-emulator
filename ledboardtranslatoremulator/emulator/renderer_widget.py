@@ -235,6 +235,14 @@ class LedRendererEmulatorWidget(QWidget):
                         self.control_parameters.noise_s,
                         self.control_parameters.noise_l
                     )
+                elif self.control_parameters.color_mode == ColorMode.HSL_LUMINANCE:
+                    # Use HSL values for noise
+                    r, g, b = self.hsl_to_rgb(
+                        self.control_parameters.noise_h,
+                        self.control_parameters.noise_s,
+                        int(noise_byte),
+                    )
+
                 else:
                     # Use RGB values for noise, scaled by brightness
                     r = self.control_parameters.noise_r
