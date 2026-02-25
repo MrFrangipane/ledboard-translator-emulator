@@ -77,7 +77,7 @@ class IO(QObject):
 
             try:
                 self.broadcaster.send_data_synced()
-            except ArtnetBroadcastError as e:
+            except (ArtnetBroadcastError, OSError) as e:
                 self.errorOccurred.emit(f"Artnet disabled: {e}")
                 self._artnet_enabled = False
 
