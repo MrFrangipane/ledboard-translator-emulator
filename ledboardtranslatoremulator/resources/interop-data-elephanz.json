@@ -38,7 +38,7 @@
     "single_led_brightness": 13,
     "dmx_enabled": true
   },
-  "emulator_ignores_dimmer": true,
+  "emulator_ignores_dimmer": false,
   "enttec_output_enabled": false,
   "enttec_port_name": "COM18",
   "fixtures": [
