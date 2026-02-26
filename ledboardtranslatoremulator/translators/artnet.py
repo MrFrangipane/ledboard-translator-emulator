@@ -21,6 +21,9 @@ class ArtnetTranslator:
         for field in fields(DmxAttributionStruct):
             if field.default > 0:  # Using the condition from C++ code (dmxAttribution.X > 0)
 
+                if field.name == "dimmer":
+                    parameters.dimmer = 1 + universe[self._fixture.dmx_address - 2 + field.default]
+
                 # Noise octaves (1-6)
                 if field.name == "noise_octaves":
                     parameters.noise_octaves = 1 + universe[self._fixture.dmx_address - 2 + field.default] // 51

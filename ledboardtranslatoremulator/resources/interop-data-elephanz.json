@@ -1,5 +1,5 @@
 {
-  "artnet_target_ip": "192.168.20.30",
+  "artnet_target_ip": "2.0.0.100",
   "default_control_parameters": {
     "dimmer": 255,
     "mapping_mode": 0,

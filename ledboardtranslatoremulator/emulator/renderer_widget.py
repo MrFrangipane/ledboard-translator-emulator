@@ -198,7 +198,7 @@ class LedRendererEmulatorWidget(QWidget):
             if self.control_parameters.strand_mask > 0:
                 start = (self.control_parameters.strand_mask - 1) * 200
                 end = start + 200 - 1
-                if point.index < start or point.index > end:
+                if point.index < start or point.index >= end:
                     continue
 
             brightness = 0
