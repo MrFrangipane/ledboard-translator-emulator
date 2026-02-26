@@ -1,3 +1,6 @@
+import logging
+logging.basicConfig(level=logging.INFO)
+
 from importlib import resources as _resources
 
 from PySide6.QtCore import Qt
@@ -18,8 +21,9 @@ if __name__ == "__main__":
     app.setOrganizationName("Frangitron")
     css.load_onto(app)
 
+    resource_path = _resources.files("ledboardtranslatoremulator.resources").joinpath('frangitron-logo.png')
     window = MainWindow(
-        logo_filepath=str(_resources.path('ledboardtranslatoremulator.resources', 'frangitron-logo.png')),
+        logo_filepath=str(resource_path),
     )
 
     def set_always_on_top(is_true):

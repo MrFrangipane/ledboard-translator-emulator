@@ -1,3 +1,5 @@
+import logging
+import traceback
 from importlib import resources
 
 from DMXEnttecPro import Controller as DMXEnttecPro
@@ -12,6 +14,9 @@ from pythonartnet.broadcaster import ArtnetBroadcaster, ArtnetBroadcastError
 from ledboardtranslatoremulator.midi.input_process import MidiInputProcess
 from ledboardtranslatoremulator.settings import store as settings_store
 from ledboardtranslatoremulator.translators.midi import MidiTranslator
+
+
+_logger = logging.getLogger(__name__)
 
 
 class IO(QObject):
@@ -78,6 +83,7 @@ class IO(QObject):
             try:
                 self.broadcaster.send_data_synced()
             except (ArtnetBroadcastError, OSError) as e:
+                _logger.error(traceback.format_exc())
                 self.errorOccurred.emit(f"Artnet disabled: {e}")
                 self._artnet_enabled = False
 
