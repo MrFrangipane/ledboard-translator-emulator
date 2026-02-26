@@ -57,7 +57,7 @@ class SettingsWidget(QWidget):
         self._suspend_signals = False
 
     def get_settings(self) -> EmulatorSettings:
-        target_ip_text = self.target_ip.text()
+        target_ip_text = self.target_ip.text().strip()
         return EmulatorSettings(
             always_on_top=self.always_on_top_checkbox.isChecked(),
             show_details=self.show_details_checkbox.isChecked(),
