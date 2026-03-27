@@ -21,6 +21,7 @@ _logger = logging.getLogger(__name__)
 
 class IO(QObject):
     started = Signal()
+    broadcasted = Signal()
     errorOccurred = Signal(str)
 
     def __init__(self):
@@ -82,6 +83,7 @@ class IO(QObject):
 
             try:
                 self.broadcaster.send_data_synced()
+                self.broadcasted.emit()
             except (ArtnetBroadcastError, OSError) as e:
                 _logger.error(traceback.format_exc())
                 self.errorOccurred.emit(f"Artnet disabled: {e}")

@@ -41,8 +41,13 @@ class CentralWidget(QWidget):
         self.led_renderer_emulator.detailsUpdated.connect(self.details_label.setText)
         layout.addWidget(self.details_label, 1, 1)
 
+        # Artnet
+        self.artnet_label = QLabel()
+        self.io.broadcasted.connect(self._artnet_broadcasted)
+        layout.addWidget(self.artnet_label, 2, 0, 1, 2)
+
         # Update
-        layout.addWidget(UpdateWidget(), 2, 0, 1, 2)
+        layout.addWidget(UpdateWidget(), 3, 0, 1, 2)
 
         self.settings_wdiget.load()
         self.io_thread.start()
@@ -50,3 +55,10 @@ class CentralWidget(QWidget):
     def _settings_changed(self, settings: EmulatorSettings):
         self._set_always_on_top_callback(settings.always_on_top)
         self.details_label.setVisible(settings.show_details)
+
+    def _artnet_broadcasted(self):
+        self.artnet_label.setText(
+            "Artnet: " +
+            " ".join([f"{i + 1}:{str(v).zfill(3)}" for i, v in enumerate(self.io.broadcaster.universes[0].buffer[0:15])])
+        )
+
