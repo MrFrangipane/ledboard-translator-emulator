@@ -1,4 +1,5 @@
 import logging
+import time
 import traceback
 from importlib import resources
 
@@ -28,6 +29,7 @@ class IO(QObject):
         super().__init__()
 
         self._artnet_enabled = True
+        self._artnet_disable_timestamp = -1
 
         settings = settings_store.load()
 
@@ -79,7 +81,12 @@ class IO(QObject):
                 self._enttec.submit()
 
             if not self._artnet_enabled:
-                continue
+                QThread.currentThread().msleep(20)
+                if time.time() - self._artnet_disable_timestamp >= 5.0:
+                    self._artnet_enabled = True
+                    self._artnet_disable_timestamp = -1
+                else:
+                    continue
 
             try:
                 self.broadcaster.send_data_synced()
@@ -88,6 +95,7 @@ class IO(QObject):
                 _logger.error(traceback.format_exc())
                 self.errorOccurred.emit(f"Artnet disabled: {e}")
                 self._artnet_enabled = False
+                self._artnet_disable_timestamp = time.time()
 
         self._midi_in.stop()
 
