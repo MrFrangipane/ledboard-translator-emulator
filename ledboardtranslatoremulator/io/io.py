@@ -85,6 +85,8 @@ class IO(QObject):
                 if time.time() - self._artnet_disable_timestamp >= 5.0:
                     self._artnet_enabled = True
                     self._artnet_disable_timestamp = -1
+                    self.broadcaster.reset_connection()
+                    _logger.info("Artnet re-enabled after 5 seconds of inactivity")
                 else:
                     continue
 
