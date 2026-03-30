@@ -83,7 +83,7 @@ class IO(QObject):
 
             if not self._artnet_enabled:
                 QThread.currentThread().msleep(20)
-                if time.time() - self._artnet_disable_timestamp >= 5.0:
+                if time.time() - self._artnet_disable_timestamp >= 1.0:
                     self._artnet_enabled = True
                     self._artnet_disable_timestamp = -1
                     self.broadcaster.reset_connection()
