@@ -15,7 +15,7 @@
     "color_mode": 2,
     "noise_h": 134,
     "noise_s": 255,
-    "noise_l": 128,
+    "noise_l": 0,
     "noise_r": 0,
     "noise_g": 200,
     "noise_b": 200,
