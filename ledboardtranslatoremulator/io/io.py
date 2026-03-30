@@ -22,6 +22,7 @@ _logger = logging.getLogger(__name__)
 
 class IO(QObject):
     started = Signal()
+    resumed = Signal()
     broadcasted = Signal()
     errorOccurred = Signal(str)
 
@@ -86,6 +87,7 @@ class IO(QObject):
                     self._artnet_enabled = True
                     self._artnet_disable_timestamp = -1
                     self.broadcaster.reset_connection()
+                    self.resumed.emit()
                     _logger.info("Artnet re-enabled after 5 seconds of inactivity")
                 else:
                     continue

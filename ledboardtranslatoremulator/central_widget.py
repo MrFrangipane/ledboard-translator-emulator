@@ -19,6 +19,7 @@ class CentralWidget(QWidget):
         self.io_thread: QThread | None = None
         self.io_thread, self.io = create_io_thread()
         self.io.errorOccurred.connect(lambda msg: self.settings_wdiget.set_message(msg))
+        self.io.resumed.connect(lambda: self.settings_wdiget.set_message("IO resumed"))
         self.io.started.connect(lambda: self.settings_wdiget.set_message("IO started"))
 
         layout = QGridLayout(self)
