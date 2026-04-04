@@ -71,7 +71,10 @@ class MidiInputProcess:
             int: The value read from the shared memory buffer
         """
         channel_index = control + channel * 127
-        return self._shared_memory.buf[channel_index]
+        return self._shared_memory.buf[channel_index + 1]
+
+    def is_playing(self) -> bool:
+        return self._shared_memory.buf[0] == 1
 
 
 if __name__ == "__main__":

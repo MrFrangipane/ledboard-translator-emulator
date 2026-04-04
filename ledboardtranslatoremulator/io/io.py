@@ -55,7 +55,8 @@ class IO(QObject):
 
         self._translator = MidiTranslator(
             fixtures=interop_data.fixtures,
-            midi_input_process=self._midi_in
+            midi_input_process=self._midi_in,
+            blackout_on_stop=settings.blackout_on_stop
         )
 
         self._alerts = self._translator.detect_conflicts()

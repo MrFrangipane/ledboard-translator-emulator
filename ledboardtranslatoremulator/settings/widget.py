@@ -27,6 +27,12 @@ class SettingsWidget(QWidget):
         self.always_on_top_checkbox.stateChanged.connect(self._changed)
         layout.addWidget(self.always_on_top_checkbox)
 
+        # Blackout on stop
+        self.blackout_on_stop_checkbox = QCheckBox("Blackout on stop")
+        self.blackout_on_stop_checkbox.setToolTip("Requires save and restart !")
+        self.blackout_on_stop_checkbox.stateChanged.connect(self._changed)
+        layout.addWidget(self.blackout_on_stop_checkbox)
+
         # Target IP
         layout.addWidget(QLabel("Target IP"))
         self.target_ip = QLineEdit()
@@ -53,6 +59,7 @@ class SettingsWidget(QWidget):
         self.always_on_top_checkbox.setChecked(settings.always_on_top)
         self.show_details_checkbox.setChecked(settings.show_details)
         self.target_ip.setText(settings.target_ip)
+        self.blackout_on_stop_checkbox.setChecked(settings.blackout_on_stop)
 
         self._suspend_signals = False
 
@@ -61,7 +68,8 @@ class SettingsWidget(QWidget):
         return EmulatorSettings(
             always_on_top=self.always_on_top_checkbox.isChecked(),
             show_details=self.show_details_checkbox.isChecked(),
-            target_ip=target_ip_text if target_ip_text else None
+            target_ip=target_ip_text if target_ip_text else None,
+            blackout_on_stop=self.blackout_on_stop_checkbox.isChecked(),
         )
 
     def load(self):

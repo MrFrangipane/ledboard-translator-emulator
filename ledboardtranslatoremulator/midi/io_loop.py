@@ -29,8 +29,14 @@ def _midi_callback(message, time_stamp, shared_memory):
             value = data_byte2  # Controller value (0-126)
 
             channel_index = control + channel * 127
-            shared_memory.buf[channel_index] = value
+            shared_memory.buf[channel_index + 1] = value
 
+    # Transport
+    if len(message) == 1:
+        if message[0] == 252:
+            shared_memory.buf[0] = 0
+        elif message[0] == 251:
+            shared_memory.buf[0] = 1
 
 def _signal_handler(sig, frame):
     """

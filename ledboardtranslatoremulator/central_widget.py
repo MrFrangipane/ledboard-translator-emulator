@@ -43,12 +43,12 @@ class CentralWidget(QWidget):
         layout.addWidget(self.details_label, 1, 1)
 
         # Artnet
-        self.artnet_label = QLabel()
-        self.io.broadcasted.connect(self._artnet_broadcasted)
-        layout.addWidget(self.artnet_label, 2, 0, 1, 2)
+        # self.artnet_label = QLabel()
+        # self.io.broadcasted.connect(self._artnet_broadcasted)
+        # layout.addWidget(self.artnet_label, 2, 0, 1, 2)
 
         # Update
-        layout.addWidget(UpdateWidget(), 3, 0, 1, 2)
+        # layout.addWidget(UpdateWidget(), 3, 0, 1, 2)
 
         self.settings_wdiget.load()
         self.io_thread.start()
