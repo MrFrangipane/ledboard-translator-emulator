@@ -15,6 +15,7 @@ from ledboardtranslatoremulator.central_widget import CentralWidget
 
 if __name__ == "__main__":
     settings_store.patch_from_interop()
+    settings = settings_store.load()
 
     app = QApplication([])
     app.setApplicationName("LED Board Translator Emulator")
@@ -25,18 +26,13 @@ if __name__ == "__main__":
     window = MainWindow(
         logo_filepath=str(resource_path),
     )
-
-    settings = settings_store.load()
+    window.setWindowTitle("LED Board Translator Emulator")
 
     def set_always_on_top(is_true):
         window.setWindowFlag(Qt.WindowStaysOnTopHint, is_true)
         window.show()
 
-    if settings.always_on_top:
-        window.setWindowFlag(Qt.WindowStaysOnTopHint, True)
-
-    window.setWindowTitle("LED Board Translator Emulator")
     window.setCentralWidget(CentralWidget(set_always_on_top))
-    window.show()
+    set_always_on_top(settings.always_on_top)
 
     app.exec()
