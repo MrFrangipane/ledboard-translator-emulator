@@ -26,9 +26,14 @@ if __name__ == "__main__":
         logo_filepath=str(resource_path),
     )
 
+    settings = settings_store.load()
+
     def set_always_on_top(is_true):
         window.setWindowFlag(Qt.WindowStaysOnTopHint, is_true)
         window.show()
+
+    if settings.always_on_top:
+        window.setWindowFlag(Qt.WindowStaysOnTopHint, True)
 
     window.setWindowTitle("LED Board Translator Emulator")
     window.setCentralWidget(CentralWidget(set_always_on_top))
