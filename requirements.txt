@@ -10,4 +10,4 @@ python-helpers@git+https://github.com/MrFrangipane/python-helpers@main
 python-rtmidi
 pythonarduinoserial@git+https://github.com/Frangitron/python-arduino-serial@main
 pythonartnet@git+https://github.com/Frangitron/python-artnet@main
-pywin32
+pywin32; sys_platform == "win32"
